@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Game</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Typing Kumo</h1>
+    <textarea id="inputParagraph" placeholder="Enter your paragraph here..."></textarea>
+    <div class="controls">
+      <button id="startGame">Start Game</button>
+      <button id="pauseGame">Pause</button>
+    </div>
+    <div class="slider-container">
+      <label for="delaySlider">Drop Interval (0-5 sec): </label>
+      <input type="range" id="delaySlider" min="0" max="5" step="0.1" value="2">
+      <span id="sliderValue">2.0 sec</span>
+    </div>
+    <div class="slider-container">
+      <label for="speedSlider">Drop Speed (1-35 px/sec): </label>
+      <input type="range" id="speedSlider" min="1" max="35" step="0.1" value="5">
+      <span id="speedValue">5 px/sec</span>
+    </div>      
+    <div id="gameContainer"></div>
+    <input type="text" id="userInput" placeholder="Type the word..." autofocus />
+    <div class="info">
+      <div id="scoreDisplay">Raw Score: 0</div>
+    </div>
+  </div>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
