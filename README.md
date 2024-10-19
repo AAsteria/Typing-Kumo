@@ -9,3 +9,5 @@ Welcome to add any **serious** or **mischievous** features to Kumo!
 Whether it's a brilliant idea or a quirky Easter egg, feel free to submit a Pull Request. 
 
 Let's make typing practicing more diverse and fun!
+
+![Kumo Demo](kumo-demo.png)
