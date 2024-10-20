@@ -69,7 +69,7 @@ input[type="range"] {
 /* Ensuring the gameContainer matches the width of the textarea */
 #gameContainer {
   width: 100%; /* Matches the width of the textarea and parent container */
-  height: 300px;
+  height: 360px;
   border: 2px solid #80d8ff;
   border-radius: 10px;
   background-color: #f5fcff;
