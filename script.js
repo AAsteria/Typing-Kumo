@@ -244,17 +244,27 @@ function dropWord(word) {
 
 function moveWordDown(wordElement, segmentIndex) {
   const speed = parseInt(speedSlider.value);
+  const direction = wordElement.dataset.direction;
 
   if (wordElement.moveInterval) return;
 
   wordElement.moveInterval = setInterval(() => {
-    if (gamePaused) return;
+    if (gamePaused) return; // 游戏暂停时不移动
 
     const currentTop = parseFloat(wordElement.style.top);
     const nextTop = currentTop + speed / 10;
 
-    if (nextTop + wordHeight >= gameContainer.clientHeight) {
-      wordReachedBottom(wordElement);
+    if (
+      nextTop + wordHeight >= gameContainer.clientHeight ||
+      checkCollisionWithGroundedWord(wordElement, nextTop, segmentIndex, direction)
+    ) {
+      const finalTop = Math.min(
+        nextTop,
+        getNextGroundedPosition(segmentIndex, direction)
+      );
+
+      wordElement.style.top = `${finalTop}px`;
+      wordReachedBottom(wordElement); // 调用停靠函数
     } else {
       wordElement.style.top = `${nextTop}px`;
     }
@@ -262,9 +272,9 @@ function moveWordDown(wordElement, segmentIndex) {
     focusClosestWord();
   }, 10);
 }
-
 function moveWordUp(wordElement, segmentIndex) {
   const speed = parseInt(speedSlider.value);
+  const direction = wordElement.dataset.direction;
 
   if (wordElement.moveInterval) return;
 
@@ -274,8 +284,17 @@ function moveWordUp(wordElement, segmentIndex) {
     const currentTop = parseFloat(wordElement.style.top);
     const nextTop = currentTop - speed / 10;
 
-    if (nextTop <= 0) {
-      wordReachedBottom(wordElement);
+    if (
+      nextTop <= 0 ||
+      checkCollisionWithGroundedWord(wordElement, nextTop, segmentIndex, direction)
+    ) {
+      const finalTop = Math.max(
+        nextTop,
+        getNextGroundedPosition(segmentIndex, direction)
+      );
+
+      wordElement.style.top = `${finalTop}px`;
+      wordReachedBottom(wordElement); // 调用停靠函数
     } else {
       wordElement.style.top = `${nextTop}px`;
     }
@@ -283,20 +302,29 @@ function moveWordUp(wordElement, segmentIndex) {
     focusClosestWord();
   }, 10);
 }
-
 function moveWordLeft(wordElement, segmentIndex) {
   const speed = parseInt(speedSlider.value);
+  const direction = wordElement.dataset.direction;
 
   if (wordElement.moveInterval) return;
 
   wordElement.moveInterval = setInterval(() => {
-    if (gamePaused) return;
+    if (gamePaused) return; // 游戏暂停时不移动
 
     const currentLeft = parseFloat(wordElement.style.left);
     const nextLeft = currentLeft + speed / 10;
 
-    if (nextLeft + wordElement.offsetWidth >= gameContainer.clientWidth) {
-      wordReachedBottom(wordElement);
+    if (
+      nextLeft + wordElement.offsetWidth >= gameContainer.clientWidth ||
+      checkCollisionWithGroundedWord(wordElement, nextLeft, segmentIndex, direction)
+    ) {
+      const finalLeft = Math.min(
+        nextLeft,
+        getNextGroundedPosition(segmentIndex, direction) - wordHeight
+      );
+
+      wordElement.style.left = `${finalLeft}px`;
+      wordReachedBottom(wordElement); // 调用停靠函数
     } else {
       wordElement.style.left = `${nextLeft}px`;
     }
@@ -307,23 +335,133 @@ function moveWordLeft(wordElement, segmentIndex) {
 
 function moveWordRight(wordElement, segmentIndex) {
   const speed = parseInt(speedSlider.value);
+  const direction = wordElement.dataset.direction;
 
   if (wordElement.moveInterval) return;
 
   wordElement.moveInterval = setInterval(() => {
-    if (gamePaused) return;
+    if (gamePaused) return; // 游戏暂停时不移动
 
     const currentLeft = parseFloat(wordElement.style.left);
     const nextLeft = currentLeft - speed / 10;
 
-    if (nextLeft <= 0) {
-      wordReachedBottom(wordElement);
+    if (
+      nextLeft <= 0 ||
+      checkCollisionWithGroundedWord(wordElement, nextLeft, segmentIndex, direction)
+    ) {
+      const finalLeft = Math.max(
+        nextLeft,
+        getNextGroundedPosition(segmentIndex, direction) + wordHeight
+      );
+
+      wordElement.style.left = `${finalLeft}px`;
+      wordElement.classList.add('grounded');
+      clearInterval(wordElement.moveInterval); // 停止移动
+      wordElement.moveInterval = null; // 移除引用
+      userInput.value = ''; // 清空输入框
+
+      activeWordsCount--;
+      groundedWordsCount++; // 增加已停靠单词计数
+
+      // 检查是否所有单词已处理
+      if (currentWordIndex >= words.length && activeWordsCount === 0) {
+        clearInterval(dropIntervalId);
+        setTimeout(showFinalScore, 100); // 延迟以确保渲染完成
+      }
     } else {
       wordElement.style.left = `${nextLeft}px`;
     }
 
     focusClosestWord();
   }, 10);
+}
+
+function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex, direction) {
+  const segmentWidth = gameContainer.clientWidth / 6;
+  const segmentHeight = gameContainer.clientHeight / 6; // 假设分段高度为 clientHeight 的六分之一
+
+  // 获取与当前方向相同的已停靠单词
+  const wordsInSegment = Array.from(gameContainer.getElementsByClassName('grounded')).filter(
+    (word) => {
+      const wordDirection = word.dataset.direction;
+      if (wordDirection !== direction) return false; // 仅考虑相同方向的单词
+
+      switch (direction) {
+        case 'down':
+        case 'up':
+          const left = parseFloat(word.style.left);
+          return left >= segmentIndex * segmentWidth && left < (segmentIndex + 1) * segmentWidth;
+        case 'left':
+        case 'right':
+          const top = parseFloat(word.style.top);
+          return top >= segmentIndex * segmentHeight && top < (segmentIndex + 1) * segmentHeight;
+        default:
+          return false;
+      }
+    }
+  );
+
+  return wordsInSegment.some((otherWord) => {
+    const otherPosition = direction === 'down' || direction === 'up'
+      ? parseFloat(otherWord.style.top)
+      : parseFloat(otherWord.style.left);
+    
+    if (direction === 'down') {
+      return nextPosition + wordHeight >= otherPosition;
+    } else if (direction === 'up') {
+      return nextPosition <= otherPosition + wordHeight;
+    } else if (direction === 'left') {
+      return nextPosition + wordElement.offsetWidth >= otherPosition;
+    } else if (direction === 'right') {
+      return nextPosition <= otherPosition + wordElement.offsetWidth;
+    }
+    return false;
+  });
+}
+
+function getNextGroundedPosition(segmentIndex, direction) {
+  const segmentWidth = gameContainer.clientWidth / 6;
+  const segmentHeight = gameContainer.clientHeight / 6; // 假设分段高度为 clientHeight 的六分之一
+
+  const wordsInSegment = Array.from(gameContainer.getElementsByClassName('grounded')).filter(
+    (word) => {
+      const wordDirection = word.dataset.direction;
+      if (wordDirection !== direction) return false; // 仅考虑相同方向的单词
+
+      switch (direction) {
+        case 'down':
+        case 'up':
+          const left = parseFloat(word.style.left);
+          return left >= segmentIndex * segmentWidth && left < (segmentIndex + 1) * segmentWidth;
+        case 'left':
+        case 'right':
+          const top = parseFloat(word.style.top);
+          return top >= segmentIndex * segmentHeight && top < (segmentIndex + 1) * segmentHeight;
+        default:
+          return false;
+      }
+    }
+  );
+
+  if (wordsInSegment.length === 0) {
+    return direction === 'down' || direction === 'right' 
+      ? (direction === 'down' ? gameContainer.clientHeight : gameContainer.clientWidth)
+      : 0;
+  } else {
+    if (direction === 'down') {
+      const topPositions = wordsInSegment.map((word) => parseFloat(word.style.top));
+      return Math.min(...topPositions) - wordHeight;
+    } else if (direction === 'up') {
+      const topPositions = wordsInSegment.map((word) => parseFloat(word.style.top));
+      return Math.max(...topPositions) + wordHeight;
+    } else if (direction === 'left') {
+      const leftPositions = wordsInSegment.map((word) => parseFloat(word.style.left));
+      return Math.min(...leftPositions) - wordHeight;
+    } else if (direction === 'right') {
+      const leftPositions = wordsInSegment.map((word) => parseFloat(word.style.left));
+      return Math.max(...leftPositions) + wordHeight;
+    }
+  }
 }
 
 function wordReachedBottom(wordElement) {
