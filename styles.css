@@ -57,6 +57,11 @@ button:hover {
   background-color: #40c4ff;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .slider-container {
   margin-bottom: 10px;
 }

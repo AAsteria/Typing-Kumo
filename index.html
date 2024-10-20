@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Typing Game</title>
+  <title>Typing Kumo</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Typing Kumo</h1>
+    <h1 id="title">Typing Kumo</h1>
     <textarea id="inputParagraph" placeholder="Enter your paragraph here..."></textarea>
     <div class="controls">
       <button id="startGame">Start Game</button>
       <button id="pauseGame">Pause</button>
+      <button id="endGame">End</button>
     </div>
     <div class="slider-container">
       <label for="delaySlider">Drop Interval (0-5 sec): </label>
@@ -32,6 +33,10 @@
       <label>
         <input type="checkbox" id="mirrorMode">
         Mirror
+      </label>
+      <label>
+        <input type="checkbox" id="upsideDownMode">
+        Upside Down
       </label>
     </div>    
     <div id="gameContainer"></div>

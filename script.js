@@ -1,7 +1,10 @@
 import { playSound } from './soundManager.js';
 
+const title = document.querySelector('title');
+const h1Title = document.getElementById('title');
 const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
+const endButton = document.getElementById('endGame');
 const gameContainer = document.getElementById('gameContainer');
 const userInput = document.getElementById('userInput');
 const scoreDisplay = document.getElementById('scoreDisplay');
@@ -13,6 +16,7 @@ const speedValue = document.getElementById('speedValue');
 const timeDisplay = document.createElement('div');
 const lockDirectionCheckbox = document.getElementById('lockDirection');
 const mirrorModeCheckbox = document.getElementById('mirrorMode');
+const upsideDownModeCheckbox = document.getElementById('upsideDownMode');
 
 let words = [];
 let score = 0;
@@ -31,6 +35,25 @@ const totalScore = 1000;
 const wordHeight = 32;
 const segmentHeights = Array(6).fill(0);
 
+function updateTitle() {
+  const allChecked = 
+    lockDirectionCheckbox.checked &&
+    mirrorModeCheckbox.checked &&
+    upsideDownModeCheckbox.checked;
+
+  if (allChecked) {
+    title.textContent = 'Typing Demon';
+    h1Title.textContent = 'Typing Demon';
+  } else {
+    title.textContent = 'Typing Kumo';
+    h1Title.textContent = 'Typing Kumo';
+  }
+}
+
+[lockDirectionCheckbox, mirrorModeCheckbox, upsideDownModeCheckbox].forEach(checkbox =>
+  checkbox.addEventListener('change', updateTitle)
+);
+
 timeDisplay.id = 'timeDisplay';
 timeDisplay.style.fontSize = '18px';
 timeDisplay.style.color = '#ff80ab';
@@ -45,12 +68,38 @@ speedSlider.addEventListener('input', () => {
   speedValue.textContent = `${speedSlider.value} px/sec`;
 });
 
-startButton.addEventListener('click', startGame);
+startButton.addEventListener('click', () => {
+  resetGame();
+  startGame();
+  endButton.disabled = false;
+  pauseButton.disabled = false;
+  pauseButton.textContent = 'Pause';
+});
 pauseButton.addEventListener('click', togglePause);
+endButton.addEventListener('click', () => {
+  if (!endButton.disabled) {
+    showFinalScore();
+    stopGame();
+    endButton.disabled = true;
+    pauseButton.disabled = true;
+  }
+});
 userInput.addEventListener('keydown', (event) => {
   playSound(event.key);
 });
 userInput.addEventListener('input', checkInput);
+userInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    const activeWord = document.querySelector('.word.active');
+    if (activeWord) {
+      activeWord.remove();
+      activeWordsCount--;
+      userInput.value = '';
+      focusClosestWord();
+    }
+  }
+});
 
 function startGame() {
   resetGame();
@@ -78,6 +127,22 @@ function splitWordWithPunctuation(word) {
   return [word];
 }
 
+function stopGame() {
+  gamePaused = true; // 设置游戏为暂停状态
+  clearInterval(dropIntervalId); // 停止单词下落的计时器
+
+  // 停止所有单词的移动
+  const movingWords = Array.from(gameContainer.getElementsByClassName('word'));
+  movingWords.forEach(word => {
+    if (word.moveInterval) {
+      clearInterval(word.moveInterval);
+      word.moveInterval = null;
+    }
+  });
+
+  userInput.value = ''; // 清空输入框
+}
+
 function resetGame() {
   gameContainer.innerHTML = '';
   score = 0;
@@ -95,6 +160,7 @@ function resetGame() {
   });
 
   clearInterval(dropIntervalId);
+  gameContainer.innerHTML = '';
   updateScore();
   updateTimer();
   userInput.value = '';
@@ -216,9 +282,12 @@ function dropWord(word) {
     wordElement.style.transform = '';
   }
 
-  // Mirror mode
   if (mirrorModeCheckbox.checked) {
     wordElement.style.transform += ' scaleX(-1)';
+  }
+
+  if (upsideDownModeCheckbox.checked) {
+    wordElement.style.transform += ' rotate(180deg)';
   }
 
   wordElement.style.width = `${segmentWidth - 4}px`;
@@ -576,23 +645,23 @@ function showFinalScore() {
   const delay = parseFloat(delaySlider.value) || 1;
   const time = elapsedTime > 0 ? elapsedTime : 1;
 
-  const shownScore = (score * speed / delay) + totalWords * 50 + (totalWords / time * 50);
+  const accuracy = groundedWordsCount / totalWords;
+  const baseScore = score * accuracy;
+
+  const shownScore = (baseScore * speed / delay) + (groundedWordsCount * 50) + (groundedWordsCount / time * 50);
 
   let difficultyMultiplier = 1;
-  if (lockDirectionCheckbox.checked) {
-    difficultyMultiplier *= 1.5;
-  }
-  if (mirrorModeCheckbox.checked) {
-    difficultyMultiplier *= 2;
-  }
+  if (lockDirectionCheckbox.checked) difficultyMultiplier *= 1.5;
+  if (mirrorModeCheckbox.checked) difficultyMultiplier *= 2;
+  if (upsideDownModeCheckbox.checked) difficultyMultiplier *= 1.75;
 
   const adjustedScore = shownScore * difficultyMultiplier;
 
   gameContainer.innerHTML = `
     <div class="final-score" style="text-align: center; font-size: 24px; color: #ff80ab;">
-      <p><strong>Congratulations!</strong></p>
+      <p><strong>Game Over!</strong></p>
       <p style="font-size: 18px; color: #333;">
-        <em>(${adjustedScore.toFixed(2)} points / ${elapsedTime} s)</em>
+        <em>Final Score: ${adjustedScore.toFixed(2)} points / ${elapsedTime} s</em>
       </p>
     </div>`;
 }
