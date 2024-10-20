@@ -18,6 +18,9 @@ const lockDirectionCheckbox = document.getElementById('lockDirection');
 const mirrorModeCheckbox = document.getElementById('mirrorMode');
 const upsideDownModeCheckbox = document.getElementById('upsideDownMode');
 
+const MAX_FONT_SIZE = 15;
+const MIN_FONT_SIZE = 10;
+
 let words = [];
 let score = 0;
 let totalWords = 0;
@@ -80,8 +83,6 @@ endButton.addEventListener('click', () => {
   if (!endButton.disabled) {
     showFinalScore();
     stopGame();
-    endButton.disabled = true;
-    pauseButton.disabled = true;
   }
 });
 userInput.addEventListener('keydown', (event) => {
@@ -276,24 +277,38 @@ function dropWord(word) {
       break;
   }
 
+  // Apply rotation if necessary
   if (rotation !== 0) {
     wordElement.style.transform = `rotate(${rotation}deg)`;
   } else {
     wordElement.style.transform = '';
   }
 
+  // Apply mirror mode if checked
   if (mirrorModeCheckbox.checked) {
     wordElement.style.transform += ' scaleX(-1)';
   }
 
+  // Apply upside-down mode if checked
   if (upsideDownModeCheckbox.checked) {
     wordElement.style.transform += ' rotate(180deg)';
   }
 
+  // Set the width of the word element
   wordElement.style.width = `${segmentWidth - 4}px`;
+  
+  // Set initial font size
+  wordElement.style.fontSize = `${MAX_FONT_SIZE}px`;
+
+  // Optional: Set other necessary styles
+  wordElement.style.position = 'absolute';
+  wordElement.style.whiteSpace = 'nowrap';
+  wordElement.style.overflow = 'hidden'; // Ensure overflow is hidden
 
   gameContainer.appendChild(wordElement);
   activeWordsCount++;
+
+  fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE);
 
   switch (direction) {
     case 'down':
@@ -308,6 +323,27 @@ function dropWord(word) {
     case 'right':
       moveWordRight(wordElement, positionIndex);
       break;
+  }
+}
+
+function fitTextToElement(element, maxWidth, maxFontSize, minFontSize) {
+  let fontSize = maxFontSize;
+  element.style.fontSize = `${fontSize}px`;
+
+  const originalWhiteSpace = element.style.whiteSpace;
+  element.style.whiteSpace = 'nowrap';
+
+  while (element.scrollWidth > maxWidth && fontSize > minFontSize) {
+    fontSize -= 1;
+    element.style.fontSize = `${fontSize}px`;
+  }
+
+  element.style.whiteSpace = originalWhiteSpace;
+
+  if (fontSize === minFontSize && element.scrollWidth > maxWidth) {
+    element.classList.add('text-overflow');
+  } else {
+    element.classList.remove('text-overflow');
   }
 }
 
@@ -621,6 +657,7 @@ function checkInput() {
       // Check if all words have been processed
       if (currentWordIndex >= words.length && activeWordsCount === 0) {
         clearInterval(dropIntervalId);
+        
         showFinalScore();
       }
     }
@@ -649,6 +686,9 @@ function showFinalScore() {
   const baseScore = score * accuracy;
 
   const shownScore = (baseScore * speed / delay) + (groundedWordsCount * 50) + (groundedWordsCount / time * 50);
+
+  endButton.disabled = true;
+  pauseButton.disabled = true;
 
   let difficultyMultiplier = 1;
   if (lockDirectionCheckbox.checked) difficultyMultiplier *= 1.5;

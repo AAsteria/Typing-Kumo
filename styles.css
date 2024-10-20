@@ -85,10 +85,10 @@ input[type="range"] {
 
 .word {
   position: absolute;
-  font-size: 15px;
   white-space: nowrap;
-  overflow: hidden; /* Prevent overflow beyond column */
-  text-overflow: ellipsis; /* Optional: if the text overflows */
+  overflow: hidden;
+  transition: font-size 0.2s ease;
+  text-overflow: clip;
 }
 
 .word.active {
