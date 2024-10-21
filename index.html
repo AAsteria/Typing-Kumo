@@ -16,15 +16,19 @@
       <button id="endGame">End</button>
     </div>
     <div class="slider-container">
-      <label for="delaySlider">Drop Interval (0-5 sec): </label>
+      <label for="delaySlider" class="slider-label">
+        Drop Interval (0-5 sec):
+        <span id="sliderValue">2.0 sec</span>
+      </label>
       <input type="range" id="delaySlider" min="0" max="5" step="0.1" value="2">
-      <span id="sliderValue">2.0 sec</span>
-    </div>
+    </div>  
     <div class="slider-container">
-      <label for="speedSlider">Drop Speed (1-35 px/sec): </label>
+      <label for="speedSlider" class="slider-label">
+        Drop Speed (1-35 px/sec):
+        <span id="speedValue">5 px/sec</span>
+      </label>
       <input type="range" id="speedSlider" min="1" max="35" step="0.1" value="5">
-      <span id="speedValue">5 px/sec</span>
-    </div>
+    </div>    
     <div id="additionalOptions">
       <label>
         <input type="checkbox" id="lockDirection">

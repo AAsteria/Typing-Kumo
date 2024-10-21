@@ -2,6 +2,8 @@ import { playSound } from './soundManager.js';
 
 const title = document.querySelector('title');
 const h1Title = document.getElementById('title');
+const cursor = document.createElement('div');
+
 const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
 const endButton = document.getElementById('endGame');
@@ -37,6 +39,15 @@ const maxActiveWords = 6;
 const totalScore = 1000;
 const wordHeight = 32;
 const segmentHeights = Array(6).fill(0);
+
+cursor.id = 'customCursor';
+document.body.appendChild(cursor);
+
+// Update cursor position based on mouse movement
+document.addEventListener('mousemove', (event) => {
+  cursor.style.left = `${event.clientX}px`;
+  cursor.style.top = `${event.clientY}px`;
+});
 
 function updateTitle() {
   const allChecked = 
