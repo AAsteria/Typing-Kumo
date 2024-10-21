@@ -34,6 +34,7 @@ let elapsedTime = 0;
 let dropIntervalId;
 let lastUsedSegment = -1;
 let groundedWordsCount = 0;
+let isFullScreen = false;
 
 const maxActiveWords = 6;
 const totalScore = 1000;
@@ -96,11 +97,9 @@ endButton.addEventListener('click', () => {
     stopGame();
   }
 });
-userInput.addEventListener('keydown', (event) => {
-  playSound(event.key);
-});
 userInput.addEventListener('input', checkInput);
 userInput.addEventListener('keydown', (event) => {
+  playSound(event.key);
   if (event.key === 'Tab') {
     event.preventDefault();
     const activeWord = document.querySelector('.word.active');
@@ -110,6 +109,14 @@ userInput.addEventListener('keydown', (event) => {
       userInput.value = '';
       focusClosestWord();
     }
+  }
+  if (event.metaKey && event.key === 'l') {
+    event.preventDefault();
+    if (!isFullScreen) enterFullScreen();
+  }
+  if (event.metaKey && event.key === 's') {
+    event.preventDefault();
+    if (isFullScreen) exitFullScreen();
   }
 });
 
@@ -773,4 +780,59 @@ function resumeWordMovements() {
         break;
     }
   });
+}
+
+// Immerse Mode
+const originalStyles = {
+  width: gameContainer.clientWidth,
+  height: gameContainer.clientHeight,
+  borderRadius: gameContainer.style.borderRadius,
+};
+
+function enterFullScreen() {
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+
+  const aspectRatio = originalStyles.width / originalStyles.height;
+
+  let scaledWidth = windowWidth;
+  let scaledHeight = scaledWidth / aspectRatio;
+  if (scaledHeight > windowHeight) {
+    scaledHeight = windowHeight;
+    scaledWidth = scaledHeight * aspectRatio;
+  }
+
+  const offsetX = (windowWidth - scaledWidth) / 2;
+  const offsetY = (windowHeight - scaledHeight) / 2;
+
+  gameContainer.style.position = 'fixed';
+  gameContainer.style.width = `${originalStyles.width}px`;
+  gameContainer.style.height = `${originalStyles.height}px`;
+  gameContainer.style.borderRadius = '0';
+  gameContainer.style.zIndex = '999';
+
+  const scaleX = scaledWidth / originalStyles.width;
+  const scaleY = scaledHeight / originalStyles.height;
+  const scale = Math.min(scaleX, scaleY);
+
+  gameContainer.style.transform = `scale(${scale})`;
+  gameContainer.style.transformOrigin = 'top left';
+  gameContainer.style.left = `${offsetX}px`;
+  gameContainer.style.top = `${offsetY}px`;
+
+  isFullScreen = true;
+}
+
+function exitFullScreen() {
+  gameContainer.style.position = '';
+  gameContainer.style.top = '';
+  gameContainer.style.left = '';
+  gameContainer.style.width = `${originalStyles.width}px`;
+  gameContainer.style.height = `${originalStyles.height}px`;
+  gameContainer.style.borderRadius = originalStyles.borderRadius;
+  gameContainer.style.zIndex = '';
+  gameContainer.style.transform = '';
+  gameContainer.style.transformOrigin = '';
+  
+  isFullScreen = false;
 }
