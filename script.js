@@ -102,6 +102,33 @@ userInput.addEventListener('keydown', (event) => {
   }
 });
 
+document.body.addEventListener('click', (event) => {
+  const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+
+  const span = document.createElement('span');
+  span.textContent = letter;
+  span.style.position = 'absolute';
+  span.style.left = `${event.clientX}px`;
+  span.style.top = `${event.clientY}px`;
+  span.style.fontSize = '15px';
+  span.style.transition = 'font-size 0.8s, opacity 0.8s';
+  span.style.opacity = '1';
+
+  const colors = ['#ff80ab', '#80d8ff', 'orange'];
+  span.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+  document.body.appendChild(span);
+
+  requestAnimationFrame(() => {
+    span.style.fontSize = '22px';
+    span.style.opacity = '0';
+  });
+
+  setTimeout(() => {
+    span.remove();
+  }, 800);
+});
+
 function startGame() {
   resetGame();
   if (inputParagraph.value.trim().length === 0) return;
