@@ -302,27 +302,21 @@ function dropWord(word) {
     case 'up':
       wordElement.style.top = `${gameContainer.clientHeight - wordHeight}px`;
       wordElement.style.left = `${leftPosition}px`;
-      if (!lockDirectionCheckbox.checked) {
-        rotation = 180;
-      }
+      rotation = 180;
       break;
     case 'left':
       wordElement.style.top = `${topPosition}px`;
       wordElement.style.left = '0px';
-      if (!lockDirectionCheckbox.checked) {
-        rotation = -90;
-      }
+      rotation = 90;
       break;
     case 'right':
       wordElement.style.top = `${topPosition}px`;
       wordElement.style.left = `${gameContainer.clientWidth - wordHeight}px`;
-      if (!lockDirectionCheckbox.checked) {
-        rotation = 90;
-      }
+      rotation = -90;
       break;
   }
 
-  // Apply rotation if necessary
+  // Apply rotation
   if (rotation !== 0) {
     wordElement.style.transform = `rotate(${rotation}deg)`;
   } else {
@@ -353,8 +347,14 @@ function dropWord(word) {
   gameContainer.appendChild(wordElement);
   activeWordsCount++;
 
-  fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE);
+  // Adjust fitTextToElement based on direction
+  if (direction === 'left' || direction === 'right') {
+    fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE, true);
+  } else {
+    fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE);
+  }
 
+  // Move the word based on direction
   switch (direction) {
     case 'down':
       moveWordDown(wordElement, positionIndex);
@@ -482,7 +482,6 @@ function moveWordLeft(wordElement, segmentIndex) {
     focusClosestWord();
   }, 10);
 }
-
 function moveWordRight(wordElement, segmentIndex) {
   const speed = parseInt(speedSlider.value);
   const direction = wordElement.dataset.direction;
@@ -568,7 +567,6 @@ function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex,
     return false;
   });
 }
-
 function getNextGroundedPosition(segmentIndex, direction) {
   const segmentWidth = gameContainer.clientWidth / 6;
   const segmentHeight = gameContainer.clientHeight / 6; // 假设分段高度为 clientHeight 的六分之一
@@ -613,7 +611,6 @@ function getNextGroundedPosition(segmentIndex, direction) {
     }
   }
 }
-
 function wordReachedBottom(wordElement) {
   wordElement.classList.add('grounded');
   clearInterval(wordElement.moveInterval);
@@ -789,14 +786,14 @@ const originalStyles = {
   borderRadius: gameContainer.style.borderRadius,
 };
 
-function enterFullScreen() {
+function scaleGameContainer() {
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
-
   const aspectRatio = originalStyles.width / originalStyles.height;
 
   let scaledWidth = windowWidth;
   let scaledHeight = scaledWidth / aspectRatio;
+
   if (scaledHeight > windowHeight) {
     scaledHeight = windowHeight;
     scaledWidth = scaledHeight * aspectRatio;
@@ -805,22 +802,25 @@ function enterFullScreen() {
   const offsetX = (windowWidth - scaledWidth) / 2;
   const offsetY = (windowHeight - scaledHeight) / 2;
 
-  gameContainer.style.position = 'fixed';
-  gameContainer.style.width = `${originalStyles.width}px`;
-  gameContainer.style.height = `${originalStyles.height}px`;
-  gameContainer.style.borderRadius = '0';
-  gameContainer.style.zIndex = '999';
-
   const scaleX = scaledWidth / originalStyles.width;
   const scaleY = scaledHeight / originalStyles.height;
   const scale = Math.min(scaleX, scaleY);
 
+  gameContainer.style.width = `${originalStyles.width}px`;
+  gameContainer.style.height = `${originalStyles.height}px`;
   gameContainer.style.transform = `scale(${scale})`;
   gameContainer.style.transformOrigin = 'top left';
   gameContainer.style.left = `${offsetX}px`;
   gameContainer.style.top = `${offsetY}px`;
+}
 
+function enterFullScreen() {
+  gameContainer.style.position = 'fixed';
+  gameContainer.style.borderRadius = '0';
+  gameContainer.style.zIndex = '999';
   isFullScreen = true;
+
+  scaleGameContainer();
 }
 
 function exitFullScreen() {
@@ -833,6 +833,12 @@ function exitFullScreen() {
   gameContainer.style.zIndex = '';
   gameContainer.style.transform = '';
   gameContainer.style.transformOrigin = '';
-  
+
   isFullScreen = false;
 }
+
+window.addEventListener('resize', () => {
+  if (isFullScreen) {
+    requestAnimationFrame(scaleGameContainer);
+  }
+});
