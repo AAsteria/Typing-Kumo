@@ -7,7 +7,7 @@ const soundKeys = [
 ];
 
 soundKeys.forEach((key) => {
-  const soundPath = `./nk_cream/${key}.wav`;
+  const soundPath = `./resources/nk_cream/${key}.wav`;
   const audio = new Audio(soundPath);
   
   audio.onerror = () => {
