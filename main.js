@@ -1,13 +1,10 @@
-import { playSound } from './soundManager.js';
-
-const title = document.querySelector('title');
-const h1Title = document.getElementById('title');
+import { lockDirectionCheckbox, mirrorModeCheckbox, upsideDownModeCheckbox} from './mode.js';
 const cursor = document.createElement('div');
 
 const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
 const endButton = document.getElementById('endGame');
-const gameContainer = document.getElementById('gameContainer');
+export const gameContainer = document.getElementById('gameContainer');
 const userInput = document.getElementById('userInput');
 const scoreDisplay = document.getElementById('scoreDisplay');
 const inputParagraph = document.getElementById('inputParagraph');
@@ -16,9 +13,6 @@ const sliderValue = document.getElementById('sliderValue');
 const speedSlider = document.getElementById('speedSlider');
 const speedValue = document.getElementById('speedValue');
 const timeDisplay = document.createElement('div');
-const lockDirectionCheckbox = document.getElementById('lockDirection');
-const mirrorModeCheckbox = document.getElementById('mirrorMode');
-const upsideDownModeCheckbox = document.getElementById('upsideDownMode');
 
 const MAX_FONT_SIZE = 15;
 const MIN_FONT_SIZE = 10;
@@ -34,7 +28,6 @@ let elapsedTime = 0;
 let dropIntervalId;
 let lastUsedSegment = -1;
 let groundedWordsCount = 0;
-let isFullScreen = false;
 
 const maxActiveWords = 6;
 const totalScore = 1000;
@@ -49,25 +42,6 @@ document.addEventListener('mousemove', (event) => {
   cursor.style.left = `${event.clientX}px`;
   cursor.style.top = `${event.clientY}px`;
 });
-
-function updateTitle() {
-  const allChecked = 
-    lockDirectionCheckbox.checked &&
-    mirrorModeCheckbox.checked &&
-    upsideDownModeCheckbox.checked;
-
-  if (allChecked) {
-    title.textContent = 'Typing Demon';
-    h1Title.textContent = 'Typing Demon';
-  } else {
-    title.textContent = 'Typing Kumo';
-    h1Title.textContent = 'Typing Kumo';
-  }
-}
-
-[lockDirectionCheckbox, mirrorModeCheckbox, upsideDownModeCheckbox].forEach(checkbox =>
-  checkbox.addEventListener('change', updateTitle)
-);
 
 timeDisplay.id = 'timeDisplay';
 timeDisplay.style.fontSize = '18px';
@@ -99,7 +73,7 @@ endButton.addEventListener('click', () => {
 });
 userInput.addEventListener('input', checkInput);
 userInput.addEventListener('keydown', (event) => {
-  playSound(event.key);
+  // playSound(event.key);
   if (event.key === 'Tab') {
     event.preventDefault();
     const activeWord = document.querySelector('.word.active');
@@ -110,14 +84,14 @@ userInput.addEventListener('keydown', (event) => {
       focusClosestWord();
     }
   }
-  if (event.metaKey && event.key === 'l') {
-    event.preventDefault();
-    if (!isFullScreen) enterFullScreen();
-  }
-  if (event.metaKey && event.key === 's') {
-    event.preventDefault();
-    if (isFullScreen) exitFullScreen();
-  }
+  // if (event.metaKey && event.key === 'l') {
+  //   event.preventDefault();
+  //   if (!isFullScreen) enterFullScreen();
+  // }
+  // if (event.metaKey && event.key === 's') {
+  //   event.preventDefault();
+  //   if (isFullScreen) exitFullScreen();
+  // }
 });
 
 document.body.addEventListener('click', (event) => {
@@ -164,6 +138,7 @@ function startGame() {
   userInput.focus();
 }
 
+// TODO: support () <>, etc,  multiple languages
 function splitWordWithPunctuation(word) {
   const match = word.match(/^([a-zA-Z'-]+)([.,!?;:]?)$/);
   if (match) {
@@ -188,7 +163,6 @@ function stopGame() {
 
   userInput.value = ''; // 清空输入框
 }
-
 function resetGame() {
   gameContainer.innerHTML = '';
   score = 0;
@@ -212,7 +186,6 @@ function resetGame() {
   userInput.value = '';
   gamePaused = false;
 }
-
 function startWordDropInterval() {
   // Drop a word immediately if possible
   if (currentWordIndex < words.length && activeWordsCount < maxActiveWords) {
@@ -236,14 +209,12 @@ function startWordDropInterval() {
     }
   }, delaySlider.value * 1000);
 }
-
 function restartWordDropInterval() {
   clearInterval(dropIntervalId);
   if (!gamePaused) {
     startWordDropInterval();
   }
 }
-
 function togglePause() {
   gamePaused = !gamePaused;
   pauseButton.textContent = gamePaused ? 'Resume' : 'Pause';
@@ -263,6 +234,37 @@ function togglePause() {
     startWordDropInterval();
     resumeWordMovements();
   }
+}
+
+function resumeWordMovements() {
+  const movingWords = Array.from(gameContainer.getElementsByClassName('word')).filter(
+    word => !word.classList.contains('grounded') && !word.moveInterval);
+
+  movingWords.forEach((word) => {
+    const segmentWidth = gameContainer.clientWidth / 6;
+    const leftPosition = parseFloat(word.style.left);
+    const segmentIndex = Math.floor(leftPosition / segmentWidth);
+
+    const direction = word.dataset.direction || 'down';
+
+    switch (direction) {
+      case 'down':
+        moveWordDown(word, segmentIndex);
+        break;
+      case 'up':
+        moveWordUp(word, segmentIndex);
+        break;
+      case 'left':
+        moveWordLeft(word, segmentIndex);
+        break;
+      case 'right':
+        moveWordRight(word, segmentIndex);
+        break;
+      default:
+        moveWordDown(word, segmentIndex);
+        break;
+    }
+  });
 }
 
 function dropWord(word) {
@@ -370,7 +372,6 @@ function dropWord(word) {
       break;
   }
 }
-
 function fitTextToElement(element, maxWidth, maxFontSize, minFontSize) {
   let fontSize = maxFontSize;
   element.style.fontSize = `${fontSize}px`;
@@ -524,7 +525,6 @@ function moveWordRight(wordElement, segmentIndex) {
     focusClosestWord();
   }, 10);
 }
-
 function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex, direction) {
   const segmentWidth = gameContainer.clientWidth / 6;
   const segmentHeight = gameContainer.clientHeight / 6; // 假设分段高度为 clientHeight 的六分之一
@@ -625,7 +625,6 @@ function wordReachedBottom(wordElement) {
     setTimeout(showFinalScore, 100);
   }
 }
-
 function focusClosestWord() {
   const wordsOnScreen = Array.from(gameContainer.getElementsByClassName('word'));
   let closestWord = null;
@@ -747,98 +746,3 @@ function showFinalScore() {
       </p>
     </div>`;
 }
-
-function resumeWordMovements() {
-  const movingWords = Array.from(gameContainer.getElementsByClassName('word')).filter(
-    word => !word.classList.contains('grounded') && !word.moveInterval);
-
-  movingWords.forEach((word) => {
-    const segmentWidth = gameContainer.clientWidth / 6;
-    const leftPosition = parseFloat(word.style.left);
-    const segmentIndex = Math.floor(leftPosition / segmentWidth);
-
-    const direction = word.dataset.direction || 'down';
-
-    switch (direction) {
-      case 'down':
-        moveWordDown(word, segmentIndex);
-        break;
-      case 'up':
-        moveWordUp(word, segmentIndex);
-        break;
-      case 'left':
-        moveWordLeft(word, segmentIndex);
-        break;
-      case 'right':
-        moveWordRight(word, segmentIndex);
-        break;
-      default:
-        moveWordDown(word, segmentIndex);
-        break;
-    }
-  });
-}
-
-// Immerse Mode
-const originalStyles = {
-  width: gameContainer.clientWidth,
-  height: gameContainer.clientHeight,
-  borderRadius: gameContainer.style.borderRadius,
-};
-
-function scaleGameContainer() {
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-  const aspectRatio = originalStyles.width / originalStyles.height;
-
-  let scaledWidth = windowWidth;
-  let scaledHeight = scaledWidth / aspectRatio;
-
-  if (scaledHeight > windowHeight) {
-    scaledHeight = windowHeight;
-    scaledWidth = scaledHeight * aspectRatio;
-  }
-
-  const offsetX = (windowWidth - scaledWidth) / 2;
-  const offsetY = (windowHeight - scaledHeight) / 2;
-
-  const scaleX = scaledWidth / originalStyles.width;
-  const scaleY = scaledHeight / originalStyles.height;
-  const scale = Math.min(scaleX, scaleY);
-
-  gameContainer.style.width = `${originalStyles.width}px`;
-  gameContainer.style.height = `${originalStyles.height}px`;
-  gameContainer.style.transform = `scale(${scale})`;
-  gameContainer.style.transformOrigin = 'top left';
-  gameContainer.style.left = `${offsetX}px`;
-  gameContainer.style.top = `${offsetY}px`;
-}
-
-function enterFullScreen() {
-  gameContainer.style.position = 'fixed';
-  gameContainer.style.borderRadius = '0';
-  gameContainer.style.zIndex = '999';
-  isFullScreen = true;
-
-  scaleGameContainer();
-}
-
-function exitFullScreen() {
-  gameContainer.style.position = '';
-  gameContainer.style.top = '';
-  gameContainer.style.left = '';
-  gameContainer.style.width = `${originalStyles.width}px`;
-  gameContainer.style.height = `${originalStyles.height}px`;
-  gameContainer.style.borderRadius = originalStyles.borderRadius;
-  gameContainer.style.zIndex = '';
-  gameContainer.style.transform = '';
-  gameContainer.style.transformOrigin = '';
-
-  isFullScreen = false;
-}
-
-window.addEventListener('resize', () => {
-  if (isFullScreen) {
-    requestAnimationFrame(scaleGameContainer);
-  }
-});

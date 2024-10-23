@@ -1,5 +1,3 @@
-// soundManager.js
-
 const sounds = {};
 
 const soundKeys = [
@@ -30,3 +28,7 @@ export function playSound(key) {
     });
   }
 }
+
+userInput.addEventListener('keydown', (event) => {
+  playSound(event.key);
+});
