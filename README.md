@@ -3,7 +3,7 @@
 'Kumo' comes from the Japanese word 'Cloud' ... but is it truly so pure and innocent?
 There might be something lurking in ...
 
-![Kumo Demo](kumo-demo.png)
+![Kumo Demo](public/kumo-demo.png)
 
 ##  How to play
 
