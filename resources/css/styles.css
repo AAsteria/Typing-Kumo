@@ -238,3 +238,56 @@ input[type="range"]::-moz-range-track {
   font-family: 'Comic Sans MS', cursive, sans-serif;
   font-size: 16px;
 }
+
+/* Settings Icon */
+#settingsIcon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 30px;
+  color: #ff80ab; /* Apply your pink theme color */
+  transition: color 0.3s;
+}
+
+#settingsIcon:hover {
+  color: #80d8ff; /* Change to light blue on hover */
+}
+
+/* Settings Dialog */
+#settingsDialog {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 200px;
+  padding: 15px;
+  background-color: white;
+  border: 2px solid #80d8ff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+  z-index: 1000;
+}
+
+/* Upload Button */
+#uploadButton {
+  background-color: #80d8ff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#uploadButton:hover {
+  background-color: #40c4ff;
+  color: #f8bbd0; /* Pink hover color for upload icon */
+}
+
