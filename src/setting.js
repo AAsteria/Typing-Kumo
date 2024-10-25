@@ -1,13 +1,22 @@
 import { loadCustomSounds } from './soundManager.js';
+import { closeScreencast } from './screencast.js';
 
 const settingsIcon = document.getElementById('settingsIcon');
 const settingsDialog = document.getElementById('settingsDialog');
 const uploadButton = document.getElementById('uploadButton');
 const fileInput = document.getElementById('fileInput');
 
+window.addEventListener('DOMContentLoaded', () => {
+  settingsDialog.classList.add('hidden');
+});
+
 settingsIcon.addEventListener('click', () => {
-  const isDialogVisible = settingsDialog.style.display === 'block';
-  settingsDialog.style.display = isDialogVisible ? 'none' : 'block';
+  const isDialogVisible = !settingsDialog.classList.contains('hidden');
+  settingsDialog.classList.toggle('hidden', isDialogVisible);
+
+  if (!isDialogVisible) {
+    closeScreencast();
+  }
 });
 
 uploadButton.addEventListener('click', () => {
