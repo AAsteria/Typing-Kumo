@@ -1,3 +1,4 @@
+import { inputParagraph } from './random.js'
 import { 
     getCurrentWordIndex, setCurrentWordIndex, 
     getActiveWordsCount, setActiveWordsCount, 
@@ -28,7 +29,7 @@ const endButton = document.getElementById('endGame');
 
 const userInput = document.getElementById('userInput');
 const scoreDisplay = document.getElementById('scoreDisplay');
-const inputParagraph = document.getElementById('inputParagraph');
+
 const delaySlider = document.getElementById('delaySlider');
 const sliderValue = document.getElementById('sliderValue');
 const speedSlider = document.getElementById('speedSlider');
