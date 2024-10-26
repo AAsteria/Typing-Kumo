@@ -1,0 +1,10 @@
+/* index.css */
+@import url('main.css');
+@import url('cursor.css');
+@import url('game.css');
+@import url('controls.css');
+@import url('setting.css');
+@import url('slider.css');
+@import url('screencast.css');
+@import url('checkbox.css');
+@import url('upload-button.css');

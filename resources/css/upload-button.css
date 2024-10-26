@@ -1,0 +1,27 @@
+/* upload-button.css */
+
+/* Upload and Screencast Toggle Buttons */
+#uploadButton,
+#screencastToggleButton {
+  background-color: #80d8ff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#uploadButton:hover,
+#screencastToggleButton:hover {
+  background-color: #40c4ff;
+}
+
+#screencastToggleButton.active {
+  background-color: #ff80ab;
+}

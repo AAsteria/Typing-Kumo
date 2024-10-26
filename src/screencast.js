@@ -45,7 +45,7 @@ document.addEventListener('keydown', (event) => {
     if (keyElement.parentElement) {
       keyElement.remove();
     }
-  }, 2000);
+  }, 3000);
 
   if (screencastContent.childElementCount > 50) {
     screencastContent.firstChild.remove();

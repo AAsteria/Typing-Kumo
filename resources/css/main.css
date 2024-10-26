@@ -1,0 +1,48 @@
+/* main.css */
+
+/* Universal Styles */
+* {
+  box-sizing: border-box;
+  cursor: none;
+}
+
+/* Body Layout */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f4f8;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+}
+
+/* Headings */
+h1 {
+  color: #ff80ab;
+}
+
+/* Textarea */
+textarea {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  border: 2px solid #80d8ff;
+  padding: 10px;
+  margin-bottom: 10px;
+  resize: none;
+  font-size: 15px;
+  outline: #40c4ff;
+}
+
+textarea::placeholder {
+  color: #9f9f9f;
+}

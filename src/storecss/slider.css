@@ -1,0 +1,53 @@
+.slider-container {
+    margin-bottom: 10px;
+}
+
+input[type="range"] {
+    width: 50%;
+    margin-left: 10px;
+}
+
+/* Style the slider track */
+input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 90%;
+    height: 8px;
+    background: #f8bbd0;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+  
+input[type="range"]:hover {
+    opacity: 1;
+}
+  
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ff80ab;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+  
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #f06292;
+}
+  
+/* Firefox-specific styling */
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ff80ab;
+    border-radius: 50%;
+    cursor: pointer;
+}
+  
+input[type="range"]::-moz-range-track {
+    background: #f8bbd0;
+    height: 8px;
+    border-radius: 5px;
+}

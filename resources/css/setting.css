@@ -1,0 +1,38 @@
+/* settings.css */
+
+/* Settings Icon */
+#settingsIcon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 30px;
+  color: #ff80ab; /* Apply your pink theme color */
+  transition: color 0.3s;
+}
+
+#settingsIcon:hover {
+  color: #80d8ff; /* Change to light blue on hover */
+}
+
+/* Settings Dialog */
+#settingsDialog.hidden {
+  display: none !important;
+}
+
+#settingsDialog {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 240px;
+  padding: 15px;
+  background-color: white;
+  border: 2px solid #80d8ff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+}

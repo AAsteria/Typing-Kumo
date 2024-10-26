@@ -1,0 +1,14 @@
+/* cursor.css */
+
+/* Custom Cursor */
+#customCursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid orange;
+    border-radius: 50%;
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  

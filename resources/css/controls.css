@@ -1,0 +1,28 @@
+/* controls.css */
+
+/* Control Buttons */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #80d8ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #40c4ff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
