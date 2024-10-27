@@ -1,0 +1,21 @@
+{
+    "primary": "#80d8ff",
+    "secondary": "#ff80ab",
+    "background": "#f0f4f8",
+    "text": "#000000",
+    "inverseText": "#ffffff",
+    "border": "#80d8ff",
+    "hover": "#40c4ff",
+    "disabled": "#cccccc",
+    "cursorBorder": "orange",
+    "cursorBackground": "transparent",
+    "gameBackground": "#f5fcff",
+    "wordActive": "#7bd8ff",
+    "wordGrounded": "rgb(234, 234, 234)",
+    "inputOutline": "#40c4ff",
+    "placeholder": "#9f9f9f",
+    "screencastBackground": "#ffdbe8",
+    "screencastActive": "#a0e1ff",
+    "dialogBackground": "#ffffff",
+    "sliderBackground": "#f8bbd0"
+} 

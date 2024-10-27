@@ -59,7 +59,7 @@ document.addEventListener('mousemove', (event) => {
 // Setup Time Display
 timeDisplay.id = 'timeDisplay';
 timeDisplay.style.fontSize = '18px';
-timeDisplay.style.color = '#ff80ab';
+timeDisplay.style.color = 'var(--secondary-color)';
 scoreDisplay.after(timeDisplay);
 
 // Event Listeners
@@ -116,7 +116,7 @@ document.body.addEventListener('click', (event) => {
   span.style.transition = 'font-size 0.8s, opacity 0.8s';
   span.style.opacity = '1';
 
-  const colors = ['#ff80ab', '#80d8ff', 'orange'];
+  const colors = ['var(--secondary-color)', 'var(--primary-color)', '#feb71e'];
   span.style.color = colors[Math.floor(Math.random() * colors.length)];
 
   document.body.appendChild(span);
@@ -251,18 +251,15 @@ function checkInput() {
       const originalChar = wordText[i];
 
       if (typedChar === originalChar) {
-        // Correct character: Show in pink
-        highlightedText += `<span style="color: pink;">${typedChar}</span>`;
+        highlightedText += `<span style="color: "#F06292;">${typedChar}</span>`;
       } else {
-        // Incorrect character: Show in orange
-        highlightedText += `<span style="color: orange;">${typedChar}</span>`;
+        highlightedText += `<span style="color: #feb71e;">${typedChar}</span>`;
         isError = true;
       }
     }
 
-    // Display remaining untyped characters in lightblue
     const remainingText = wordText.substring(typedValue.length);
-    highlightedText += `<span style="color: lightblue;">${remainingText}</span>`;
+    highlightedText += `<span style="color: #4A90E2;">${remainingText}</span>`;
 
     activeWord.innerHTML = highlightedText;
     activeWord.dataset.originalText = wordText;

@@ -39,13 +39,13 @@ document.addEventListener('keydown', (event) => {
   screencastContent.appendChild(keyElement);
 
   requestAnimationFrame(() => keyElement.classList.add('active'));
-  setTimeout(() => keyElement.classList.remove('active'), 300);
+  setTimeout(() => keyElement.classList.remove('active'), 500);
 
   setTimeout(() => {
     if (keyElement.parentElement) {
       keyElement.remove();
     }
-  }, 3000);
+  }, 3600);
 
   if (screencastContent.childElementCount > 50) {
     screencastContent.firstChild.remove();

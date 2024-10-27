@@ -1,5 +1,3 @@
-/* main.css */
-
 /* Universal Styles */
 * {
   box-sizing: border-box;
@@ -14,7 +12,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f4f8;
+  background-color: var(--background-color, #f0f4f8);
   font-family: 'Comic Sans MS', cursive, sans-serif;
 }
 
@@ -27,22 +25,23 @@ body {
 
 /* Headings */
 h1 {
-  color: #ff80ab;
+  color: var(--secondary-color, #ff80ab);
 }
 
 /* Textarea */
 textarea {
+  background-color: var(--container-background-color, #F6FBFF);
   width: 100%;
   height: 100px;
   border-radius: 10px;
-  border: 2px solid #80d8ff;
+  border: 2px solid var(--primary-color, #80d8ff);
   padding: 10px;
   margin-bottom: 10px;
   resize: none;
   font-size: 15px;
-  outline: #40c4ff;
+  outline: var(--input-outline-color, #40c4ff);
 }
 
 textarea::placeholder {
-  color: #9f9f9f;
+  color: var(--placeholder-color, #9f9f9f);
 }

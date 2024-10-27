@@ -1,12 +1,10 @@
-/* game.css */
-
 /* Game Container */
 #gameContainer {
   width: 100%; /* Matches the width of the textarea and parent container */
   height: 360px;
-  border: 2px solid #80d8ff;
+  border: 2px solid var(--primary-color, #80d8ff);
   border-radius: 10px;
-  background-color: #f5fcff;
+  background-color: var(--game-background-color, #f5fcff);
   overflow: hidden;
   margin-bottom: 20px;
   position: relative;
@@ -22,26 +20,27 @@
 }
 
 .word.active {
-  color: #7bd8ff;
+  color: var(--word-active-color, #7bd8ff);
 }
 
 .word.grounded {
-  color: rgb(234, 234, 234);
+  color: var(--word-grounded-color, rgb(234, 234, 234));
 }
 
 /* User Input */
 #userInput {
+  background-color: var(--container-background-color, #F6FBFF);
   width: 100%;
   border-radius: 10px;
-  border: 2px solid #80d8ff;
+  border: 2px solid var(--primary-color, #80d8ff);
   padding: 10px;
   font-size: 16px;
-  outline: #40c4ff;
+  outline: var(--input-outline-color, #40c4ff);
 }
 
 #userInput::placeholder {
   font-size: 14px;
-  color: #9f9f9f;
+  color: var(--placeholder-color, #c0c0c0);
 }
 
 /* Info Display */
@@ -52,5 +51,5 @@
 
 #scoreDisplay, #timeDisplay {
   font-size: 18px;
-  color: #ff80ab;
+  color: var(--secondary-color, #ff80ab);
 }

@@ -1,6 +1,4 @@
-/* controls.css */
-
-/* Control Buttons */
+/* Control Buttons Container */
 .controls {
   display: flex;
   justify-content: center;
@@ -8,9 +6,10 @@
   margin-bottom: 10px;
 }
 
+/* Button Styles */
 button {
-  background-color: #80d8ff;
-  color: white;
+  background-color: var(--primary-color, #80d8ff);
+  color: var(--inverse-text-color, #ffffff);
   border: none;
   padding: 10px 20px;
   border-radius: 20px;
@@ -18,10 +17,12 @@ button {
   transition: background-color 0.3s;
 }
 
+/* Hover State */
 button:hover {
-  background-color: #40c4ff;
+  background-color: var(--hover-color, #40c4ff);
 }
 
+/* Disabled State */
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

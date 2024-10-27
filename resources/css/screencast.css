@@ -1,12 +1,10 @@
-/* screencast.css */
-
 /* Screencast Overlay */
 #screencastOverlay {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #ffdbe8;
+  background-color: var(--screencast-background-color, #ffdbe8);
   padding: 10px;
   display: none;
   align-items: center;
@@ -14,7 +12,7 @@
   z-index: 9999;
   font-family: 'Courier New', Courier, monospace;
   font-size: 16px;
-  color: white;
+  color: var(--inverse-text-color, #ffffff);
   overflow-x: auto;
   gap: 5px;
 }
@@ -35,7 +33,7 @@
 
 /* Screencast Key Style */
 .screencast-key {
-  background-color: #ff80ab; /* #44475a for darker*/
+  background-color: var(--secondary-color, #ff80ab);
   border-radius: 4px;
   padding: 8px 10px;
   margin: 2px;
@@ -44,6 +42,6 @@
 }
 
 .screencast-key.active {
-  background-color: #a0e1ff;
+  background-color: var(--screencast-active-color, #a0e1ff);
   transform: scale(1.2);
 }

@@ -5,9 +5,9 @@
     position: absolute;
     width: 20px;
     height: 20px;
-    border: 2.5px solid orange;
+    border: 2.5px solid var(--cursor-border-color, #feb71e);
     border-radius: 50%;
-    background-color: transparent;
+    background-color: var(--cursor-background-color, transparent);
     pointer-events: none;
     z-index: 9999;
   }

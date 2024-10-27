@@ -14,8 +14,8 @@ import {
 } from './mode.js';
 import { showFinalScore } from './score.js';
 
-const MAX_FONT_SIZE = 15;
-const MIN_FONT_SIZE = 10;
+const MAX_FONT_SIZE = 20;
+const MIN_FONT_SIZE = 8;
 
 let lastUsedSegment = -1;
 
