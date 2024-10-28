@@ -21,7 +21,7 @@ import {
     mirrorModeCheckbox, 
     upsideDownModeCheckbox 
 } from './mode.js';
-import { showFinalScore as displayFinalScore } from './score.js';
+import { displayFinalScore } from './score.js';
 
 // DOM Elements
 export const gameContainer = document.getElementById('gameContainer');
@@ -86,7 +86,6 @@ pauseButton.addEventListener('click', togglePause);
 
 endButton.addEventListener('click', () => {
   if (!endButton.disabled) {
-    showFinalScore();
     stopGame();
   }
 });
@@ -279,7 +278,6 @@ function checkInput() {
       if (typedValue === wordText) {
           const segmentIndex = getSegmentIndex(activeWord);
           decreaseSegmentHeight(segmentIndex, wordHeight); // 减少堆叠高度
-          console.log(`Segment ${segmentIndex} height decreased to ${getSegmentHeight(segmentIndex)}px`);
 
           if (activeWord.moveInterval) {
               clearInterval(activeWord.moveInterval);
@@ -296,7 +294,7 @@ function checkInput() {
           // 检查是否所有单词都已处理完毕
           if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
               clearInterval(getDropIntervalId());
-              showFinalScore();
+              stopGame();
           }
       }
   }

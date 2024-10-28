@@ -13,7 +13,6 @@ import {
     mirrorModeCheckbox, 
     upsideDownModeCheckbox 
 } from './mode.js';
-import { showFinalScore } from './score.js';
 import { stopGame } from './main.js'; // 确保 main.js 导出 stopGame
 
 const MAX_FONT_SIZE = 20;
@@ -46,7 +45,7 @@ export function startWordDropInterval() {
         if (getCurrentWordIndex() >= words.length && getActiveWordsCount() === 0) {
             clearInterval(intervalId);
             // Trigger final score display
-            showFinalScore(); // Assuming showFinalScore can handle internal calculations
+            stopGame(); // Assuming stopGame can handle internal calculations
         }
     }, parseFloat(document.getElementById('delaySlider').value) * 1000); // Access delaySlider directly
 
@@ -396,7 +395,7 @@ export function moveWordRight(wordElement, segmentIndex) {
             // Check if all words have been processed
             if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
                 clearInterval(getDropIntervalId()); // Use getter function
-                showFinalScore(); // Assuming showFinalScore handles calculations
+                stopGame(); // Assuming stopGame handles calculations
             }
         } else {
             wordElement.style.left = `${nextLeft}px`;
@@ -543,7 +542,7 @@ function wordReachedBottom(wordElement) {
     if (currentHeight >= containerHeight) {
         console.log(`Segment ${segmentIndex} reached container height. Ending game.`);
         clearInterval(getDropIntervalId()); // 清除掉落间隔
-        showFinalScore(); // 显示最终得分
+        stopGame(); // 显示最终得分
         stopGame(); // 停止游戏
         return; // 立即退出函数，防止继续执行
     }
@@ -551,7 +550,7 @@ function wordReachedBottom(wordElement) {
     // 检查是否所有单词都已处理完毕
     if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
         clearInterval(getDropIntervalId());
-        showFinalScore();
+        stopGame();
     }
 }
 

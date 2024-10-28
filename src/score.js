@@ -1,6 +1,6 @@
 import { gameContainer } from "./main.js";
 
-export function showFinalScore(adjustedScore, elapsedTime) {
+export function displayFinalScore(adjustedScore, elapsedTime) {
     gameContainer.innerHTML = `
         <div class="final-score" style="text-align: center; font-size: 24px; color: var(--secondary-color);">
             <p><strong>Game Over!</strong></p>
