@@ -251,15 +251,15 @@ function checkInput() {
       const originalChar = wordText[i];
 
       if (typedChar === originalChar) {
-        highlightedText += `<span style="color: "#F06292;">${typedChar}</span>`;
+        highlightedText += `<span style="color: "var(--primary-color), #F06292;">${typedChar}</span>`;
       } else {
-        highlightedText += `<span style="color: #feb71e;">${typedChar}</span>`;
+        highlightedText += `<span style="color: #CF6679;">${typedChar}</span>`;
         isError = true;
       }
     }
 
     const remainingText = wordText.substring(typedValue.length);
-    highlightedText += `<span style="color: #4A90E2;">${remainingText}</span>`;
+    highlightedText += `<span style="color: var(--secondary-color, #4A90E2);">${remainingText}</span>`;
 
     activeWord.innerHTML = highlightedText;
     activeWord.dataset.originalText = wordText;

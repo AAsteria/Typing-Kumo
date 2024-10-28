@@ -8,3 +8,5 @@ import './screencast.js';
 import './setting.js';
 import './soundManager.js';
 import './vars.js';
+import './halloween.js';
+import './themeManager.js';

@@ -1,23 +1,24 @@
 import { loadCustomSounds } from './soundManager.js';
 import { closeScreencast } from './screencast.js';
-import { loadTheme } from './themeManager.js'; 
+// import { loadTheme } from './themeManager.js'; 
 
 const settingsIcon = document.getElementById('settingsIcon');
 const settingsDialog = document.getElementById('settingsDialog');
 const uploadButton = document.getElementById('uploadButton');
 const fileInput = document.getElementById('fileInput');
 
-const darkModeToggle = document.getElementById('darkModeToggle');
-let isDarkMode = false;
+// TODO: currently disabled, remove the comments when done!
+// const darkModeToggle = document.getElementById('darkModeToggle');
+// let isDarkMode = false;
 
-darkModeToggle.addEventListener('click', () => {
-  isDarkMode = !isDarkMode;
-  document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  darkModeToggle.innerHTML = isDarkMode
-    ? '<i class="fa-solid fa-moon"></i>'
-    : '<i class="fa-solid fa-sun"></i>';
-  loadTheme('/resources/themes/kumo.json');
-});
+// darkModeToggle.addEventListener('click', () => {
+//   isDarkMode = !isDarkMode;
+//   document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+//   darkModeToggle.innerHTML = isDarkMode
+//     ? '<i class="fa-solid fa-moon"></i>'
+//     : '<i class="fa-solid fa-sun"></i>';
+//   loadTheme('/resources/themes/kumo.json');
+// });
 
 window.addEventListener('DOMContentLoaded', () => {
   settingsDialog.classList.add('hidden');

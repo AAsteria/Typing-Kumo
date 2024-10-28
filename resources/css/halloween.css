@@ -1,0 +1,17 @@
+.halloween-icon {
+    position: absolute;
+    font-size: 20px; /* Start size */
+    opacity: 0; /* Start invisible */
+    transform: scale(0.5); /* Start smaller */
+    transition: opacity 2s ease, transform 2s ease;
+}
+
+.halloween-icon.fade-grow {
+    opacity: 1; /* Fade in */
+    transform: scale(2.5); /* Gradually grow to 1.5x size */
+}
+
+.halloween-icon.fade-out {
+    opacity: 0; /* Fade out */
+    transition: opacity 1s ease; /* Faster fade-out */
+}
