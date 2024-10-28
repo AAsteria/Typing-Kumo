@@ -65,7 +65,7 @@ window.addEventListener('resize', () => {
     }
 });
 
-userInput.addEventListener('keydown', (event) => {
+window.addEventListener('keydown', (event) => {
     if (event.metaKey && event.key === 'l') {
         event.preventDefault();
         if (!isFullScreen) enterFullScreen();
