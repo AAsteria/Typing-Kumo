@@ -1,105 +1,82 @@
 // vars.js
 
-// Private variables
-let words = [];
-let activeWordsCount = 0;
+// 初始化6列的堆叠高度为0
+let segmentHeights = Array(6).fill(0); // 单位：像素
+
+// 获取当前单词索引
 let currentWordIndex = 0;
-let dropIntervalId = null;
-let gamePaused = false;
-let groundedWordsCount = 0;
-
-/**
- * Gets the current array of words.
- * @returns {Array} The words array.
- */
-export function getWords() {
-    return words;
-}
-
-/**
- * Sets the array of words.
- * @param {Array} newWords - The new array of words.
- */
-export function setWords(newWords) {
-    words = newWords;
-}
-
-/**
- * Gets the current word index.
- * @returns {number} The current word index.
- */
 export function getCurrentWordIndex() {
     return currentWordIndex;
 }
-
-/**
- * Sets the current word index.
- * @param {number} index - The new current word index.
- */
 export function setCurrentWordIndex(index) {
     currentWordIndex = index;
 }
 
-/**
- * Gets the count of active words.
- * @returns {number} The active words count.
- */
+// 获取活动单词计数
+let activeWordsCount = 0;
 export function getActiveWordsCount() {
     return activeWordsCount;
 }
-
-/**
- * Sets the count of active words.
- * @param {number} count - The new active words count.
- */
 export function setActiveWordsCount(count) {
     activeWordsCount = count;
 }
 
-/**
- * Gets the drop interval ID.
- * @returns {number|null} The drop interval ID.
- */
+// 获取所有单词
+let words = [];
+export function getWords() {
+    return words;
+}
+export function setWords(newWords) {
+    words = newWords;
+}
+
+// 获取掉落间隔ID
+let dropIntervalId = null;
 export function getDropIntervalId() {
     return dropIntervalId;
 }
-
-/**
- * Sets the drop interval ID.
- * @param {number} id - The new drop interval ID.
- */
 export function setDropIntervalId(id) {
     dropIntervalId = id;
 }
 
-/**
- * Checks if the game is paused.
- * @returns {boolean} True if the game is paused, otherwise false.
- */
+// 获取固定单词计数
+let groundedWordsCount = 0;
+export function getGroundedWordCount() {
+    return groundedWordsCount;
+}
+export function setGroundedWordCount(count) {
+    groundedWordsCount = count;
+}
+
+// 游戏是否暂停
+let gamePaused = false;
 export function isGamePaused() {
     return gamePaused;
 }
-
-/**
- * Sets the game paused state.
- * @param {boolean} paused - The new paused state.
- */
 export function setGamePaused(paused) {
     gamePaused = paused;
 }
 
-/**
- * Gets the count of grounded words.
- * @returns {number} The grounded words count.
- */
-export function getGroundedWordCount() {
-    return groundedWordsCount;
+// 获取特定列的堆叠高度
+export function getSegmentHeight(index) {
+    if (index < 0 || index >= segmentHeights.length) return 0;
+    return segmentHeights[index];
 }
 
-/**
- * Sets the count of grounded words.
- * @param {number} count - The new grounded words count.
- */
-export function setGroundedWordCount(count) {
-    groundedWordsCount = count;
+// 增加特定列的堆叠高度
+export function increaseSegmentHeight(index, delta) {
+    if (index < 0 || index >= segmentHeights.length) return;
+    segmentHeights[index] += delta;
+}
+
+// 减少特定列的堆叠高度
+export function decreaseSegmentHeight(index, delta) {
+    if (index < 0 || index >= segmentHeights.length) return;
+    segmentHeights[index] -= delta;
+    if (segmentHeights[index] < 0) segmentHeights[index] = 0; // 防止负值
+}
+
+// 重置所有列的堆叠高度
+export function resetSegmentHeights() {
+    segmentHeights = Array(6).fill(0);
 }

@@ -1,23 +1,20 @@
-const webTitle = document.querySelector('webTitle');
-const gameTitle = document.getElementById('webTitle');
+const webTitle = document.getElementById('title');  // In-page title element
+const gameTitle = document.querySelector('title');  // <title> element in the head
 
 export const lockDirectionCheckbox = document.getElementById('lockDirection');
 export const mirrorModeCheckbox = document.getElementById('mirrorMode');
 export const upsideDownModeCheckbox = document.getElementById('upsideDownMode');
 
 function updateTitle() {
-    const allChecked = 
+    const allChecked =
         lockDirectionCheckbox.checked &&
         mirrorModeCheckbox.checked &&
         upsideDownModeCheckbox.checked;
 
-    if (allChecked) {
-        webTitle.textContent = 'Typing Demon';
-        gameTitle.textContent = 'Typing Demon';
-    } else {
-        webTitle.textContent = 'Typing Kumo';
-        gameTitle.textContent = 'Typing Kumo';
-    }
+    const newTitle = allChecked ? 'Typing Demon' : 'Typing Kumo';
+
+    webTitle.textContent = newTitle;  // Update the in-page title
+    gameTitle.textContent = newTitle; // Update the browser tab title
 }
 
 [lockDirectionCheckbox, mirrorModeCheckbox, upsideDownModeCheckbox].forEach(checkbox =>

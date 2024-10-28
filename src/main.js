@@ -1,3 +1,4 @@
+// main.js
 import { inputParagraph } from './random.js'
 import { 
     getCurrentWordIndex, setCurrentWordIndex, 
@@ -5,7 +6,9 @@ import {
     getWords, setWords, 
     getDropIntervalId,
     isGamePaused, setGamePaused,
-    getGroundedWordCount, setGroundedWordCount
+    getGroundedWordCount, setGroundedWordCount,
+    decreaseSegmentHeight,
+    resetSegmentHeights
 } from './vars.js';
 import { 
     startWordDropInterval, 
@@ -42,8 +45,7 @@ let startTime;
 let elapsedTime = 0;
 
 const totalScore = 1000;
-export const wordHeight = 32;
-const segmentHeights = Array(6).fill(0);
+export const wordHeight = 32; // 确保与 CSS 中的 word 元素高度一致
 
 // Setup Cursor
 const cursor = document.createElement('div');
@@ -96,8 +98,10 @@ userInput.addEventListener('keydown', (event) => {
     event.preventDefault();
     const activeWord = document.querySelector('.word.active');
     if (activeWord) {
+      const segmentIndex = getSegmentIndex(activeWord);
       activeWord.remove();
       setActiveWordsCount(getActiveWordsCount() - 1);
+      decreaseSegmentHeight(segmentIndex, wordHeight); // 减少堆叠高度
       userInput.value = '';
       focusClosestWord();
     }
@@ -131,7 +135,9 @@ document.body.addEventListener('click', (event) => {
   }, 800);
 });
 
-
+/**
+ * Starts the game by initializing variables and starting word drops.
+ */
 function startGame() {
   resetGame();
   if (inputParagraph.value.trim().length === 0) return;
@@ -168,37 +174,32 @@ function splitWordWithPunctuation(word) {
 /**
  * Stops the game by pausing word drops and movements.
  */
-function stopGame() {
+export function stopGame() {
   setGamePaused(true);
   clearInterval(getDropIntervalId());
 
-  // Stop all moving words
+  // 停止所有移动的单词
   const movingWords = Array.from(gameContainer.getElementsByClassName('word'));
   movingWords.forEach(word => {
-    if (word.moveInterval) {
-      clearInterval(word.moveInterval);
-      word.moveInterval = null;
-    }
+      if (word.moveInterval) {
+          clearInterval(word.moveInterval);
+          word.moveInterval = null;
+      }
   });
-
+  showFinalScore();
   userInput.value = '';
 }
 
+/**
+ * Resets the game state to initial conditions.
+ */
 function resetGame() {
   gameContainer.innerHTML = '';
   score = 0;
   setActiveWordsCount(0);
   setCurrentWordIndex(0);
   elapsedTime = 0;
-  segmentHeights.fill(0);
-
-  const movingWords = Array.from(gameContainer.getElementsByClassName('word'));
-  movingWords.forEach(word => {
-    if (word.moveInterval) {
-      clearInterval(word.moveInterval);
-      word.moveInterval = null;
-    }
-  });
+  resetSegmentHeights(); // 重置所有列的堆叠高度
 
   clearInterval(getDropIntervalId());
   updateScore();
@@ -233,6 +234,17 @@ function togglePause() {
 }
 
 /**
+ * 获取单词所属的列索引。
+ * @param {HTMLElement} wordElement - 单词元素。
+ * @returns {number} 列索引。
+ */
+function getSegmentIndex(wordElement) {
+    const gameContainer = document.getElementById('gameContainer');
+    const segmentWidth = gameContainer.clientWidth / 6;
+    return Math.floor(parseFloat(wordElement.style.left) / segmentWidth);
+}
+
+/**
  * Checks user input against the active word.
  */
 function checkInput() {
@@ -240,61 +252,66 @@ function checkInput() {
   const typedValue = userInput.value;
 
   if (activeWord) {
-    const wordText = activeWord.dataset.originalText || activeWord.textContent;
+      const wordText = activeWord.dataset.originalText || activeWord.textContent;
 
-    let highlightedText = '';
-    let isError = false;
+      let highlightedText = '';
+      let isError = false;
 
-    // Iterate over each typed character and match it with the word's text
-    for (let i = 0; i < typedValue.length; i++) {
-      const typedChar = typedValue[i];
-      const originalChar = wordText[i];
+      // 遍历每个输入的字符并与单词文本匹配
+      for (let i = 0; i < typedValue.length; i++) {
+          const typedChar = typedValue[i];
+          const originalChar = wordText[i];
 
-      if (typedChar === originalChar) {
-        highlightedText += `<span style="color: "var(--primary-color), #F06292;">${typedChar}</span>`;
-      } else {
-        highlightedText += `<span style="color: #CF6679;">${typedChar}</span>`;
-        isError = true;
-      }
-    }
-
-    const remainingText = wordText.substring(typedValue.length);
-    highlightedText += `<span style="color: var(--secondary-color, #4A90E2);">${remainingText}</span>`;
-
-    activeWord.innerHTML = highlightedText;
-    activeWord.dataset.originalText = wordText;
-
-    if (typedValue === wordText) {
-      const segmentIndex = Math.floor(
-        parseFloat(activeWord.style.left) / (gameContainer.clientWidth / 6)
-      );
-      segmentHeights[segmentIndex] -= wordHeight;
-
-      if (activeWord.moveInterval) {
-        clearInterval(activeWord.moveInterval);
-        activeWord.moveInterval = null;
+          if (typedChar === originalChar) {
+              highlightedText += `<span style="color: var(--primary-color, #F06292);">${typedChar}</span>`;
+          } else {
+              highlightedText += `<span style="color: #CF6679;">${typedChar}</span>`;
+              isError = true;
+          }
       }
 
-      activeWord.remove();
-      setActiveWordsCount(getActiveWordsCount() - 1);
-      setGroundedWordCount(getGroundedWordCount() + 1);
-      score += totalScore / totalWords;
-      updateScore();
-      userInput.value = '';
+      const remainingText = wordText.substring(typedValue.length);
+      highlightedText += `<span style="color: var(--secondary-color, #4A90E2);">${remainingText}</span>`;
 
-      // Check if all words have been processed
-      if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
-        clearInterval(getDropIntervalId());
-        showFinalScore();
+      activeWord.innerHTML = highlightedText;
+      activeWord.dataset.originalText = wordText;
+
+      if (typedValue === wordText) {
+          const segmentIndex = getSegmentIndex(activeWord);
+          decreaseSegmentHeight(segmentIndex, wordHeight); // 减少堆叠高度
+          console.log(`Segment ${segmentIndex} height decreased to ${getSegmentHeight(segmentIndex)}px`);
+
+          if (activeWord.moveInterval) {
+              clearInterval(activeWord.moveInterval);
+              activeWord.moveInterval = null;
+          }
+
+          activeWord.remove();
+          setActiveWordsCount(getActiveWordsCount() - 1);
+          setGroundedWordCount(getGroundedWordCount() + 1);
+          score += totalScore / totalWords;
+          updateScore();
+          userInput.value = '';
+
+          // 检查是否所有单词都已处理完毕
+          if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
+              clearInterval(getDropIntervalId());
+              showFinalScore();
+          }
       }
-    }
   }
 }
 
+/**
+ * Updates the score display.
+ */
 function updateScore() {
   scoreDisplay.textContent = `Raw Score: ${Math.round(score)}`;
 }
 
+/**
+ * Updates the timer display.
+ */
 function updateTimer() {
   elapsedTime = Math.floor((Date.now() - startTime) / 1000);
   timeDisplay.textContent = `Time: ${elapsedTime} sec`;
@@ -304,6 +321,9 @@ function updateTimer() {
   }
 }
 
+/**
+ * Displays the final score to the user.
+ */
 function showFinalScore() {
   const speed = parseFloat(speedSlider.value) || 1;
   const delay = parseFloat(delaySlider.value) || 1;

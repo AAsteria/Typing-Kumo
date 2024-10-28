@@ -16,7 +16,7 @@ export async function loadTheme(themePath) {
     const theme = await response.json();
     console.log("Theme loaded:", theme); // Check if theme JSON data is loaded
     applyLightTheme(theme);
-    applyInitialDarkModeState(theme);
+    // applyInitialDarkModeState(theme);
   } catch (error) {
     console.error("Error loading theme:", error);
   }

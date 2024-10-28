@@ -5,7 +5,8 @@ import {
     getActiveWordsCount, setActiveWordsCount, 
     getWords, getDropIntervalId, setDropIntervalId, 
     getGroundedWordCount, setGroundedWordCount,
-    isGamePaused 
+    isGamePaused,
+    getSegmentHeight, increaseSegmentHeight
 } from './vars.js';
 import { 
     lockDirectionCheckbox, 
@@ -13,6 +14,7 @@ import {
     upsideDownModeCheckbox 
 } from './mode.js';
 import { showFinalScore } from './score.js';
+import { stopGame } from './main.js'; // 确保 main.js 导出 stopGame
 
 const MAX_FONT_SIZE = 20;
 const MIN_FONT_SIZE = 8;
@@ -136,7 +138,7 @@ function dropWord(word) {
             wordElement.style.left = `${leftPosition}px`;
             break;
         case 'up':
-            wordElement.style.top = `${gameContainer.clientHeight - 32}px`; // wordHeight = 32
+            wordElement.style.top = `${gameContainer.clientHeight - wordHeight}px`; // 使用动态 wordHeight
             wordElement.style.left = `${leftPosition}px`;
             rotation = 180;
             break;
@@ -147,7 +149,7 @@ function dropWord(word) {
             break;
         case 'right':
             wordElement.style.top = `${topPosition}px`;
-            wordElement.style.left = `${gameContainer.clientWidth - 32}px`; // wordHeight = 32
+            wordElement.style.left = `${gameContainer.clientWidth - wordHeight}px`; // 使用动态 wordHeight
             rotation = -90;
             break;
     }
@@ -171,7 +173,7 @@ function dropWord(word) {
 
     // Set the width of the word element
     wordElement.style.width = `${segmentWidth - 4}px`;
-    
+
     // Set initial font size
     wordElement.style.fontSize = `${MAX_FONT_SIZE}px`;
 
@@ -253,8 +255,11 @@ export function moveWordDown(wordElement, segmentIndex) {
         const currentTop = parseFloat(wordElement.style.top);
         const nextTop = currentTop + speed / 10;
 
+        const gameContainer = document.getElementById('gameContainer');
+        const containerHeight = gameContainer.clientHeight;
+
         if (
-            nextTop + wordHeight >= document.getElementById('gameContainer').clientHeight ||
+            nextTop + wordHeight >= containerHeight ||
             checkCollisionWithGroundedWord(wordElement, nextTop, segmentIndex, direction)
         ) {
             const finalTop = Math.min(
@@ -288,6 +293,9 @@ export function moveWordUp(wordElement, segmentIndex) {
 
         const currentTop = parseFloat(wordElement.style.top);
         const nextTop = currentTop - speed / 10;
+
+        const gameContainer = document.getElementById('gameContainer');
+        const containerHeight = gameContainer.clientHeight;
 
         if (
             nextTop <= 0 ||
@@ -325,8 +333,11 @@ export function moveWordLeft(wordElement, segmentIndex) {
         const currentLeft = parseFloat(wordElement.style.left);
         const nextLeft = currentLeft + speed / 10;
 
+        const gameContainer = document.getElementById('gameContainer');
+        const containerWidth = gameContainer.clientWidth;
+
         if (
-            nextLeft + wordElement.offsetWidth >= document.getElementById('gameContainer').clientWidth ||
+            nextLeft + wordElement.offsetWidth >= containerWidth ||
             checkCollisionWithGroundedWord(wordElement, nextLeft, segmentIndex, direction)
         ) {
             const finalLeft = Math.min(
@@ -360,6 +371,9 @@ export function moveWordRight(wordElement, segmentIndex) {
 
         const currentLeft = parseFloat(wordElement.style.left);
         const nextLeft = currentLeft - speed / 10;
+
+        const gameContainer = document.getElementById('gameContainer');
+        const containerWidth = gameContainer.clientWidth;
 
         if (
             nextLeft <= 0 ||
@@ -395,7 +409,7 @@ export function moveWordRight(wordElement, segmentIndex) {
 /**
  * Checks for collision with grounded words.
  * @param {HTMLElement} wordElement - The word element to check.
- * @param {number} nextPosition - The next position to check.
+ * @param {number} nextPosition - The next position to check (top or left based on direction).
  * @param {number} segmentIndex - The index of the segment the word is in.
  * @param {string} direction - The direction of movement.
  * @returns {boolean} True if collision occurs, otherwise false.
@@ -430,15 +444,15 @@ function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex,
         const otherPosition = direction === 'down' || direction === 'up'
             ? parseFloat(otherWord.style.top)
             : parseFloat(otherWord.style.left);
-        
+
         if (direction === 'down') {
             return nextPosition + wordHeight >= otherPosition;
         } else if (direction === 'up') {
             return nextPosition <= otherPosition + wordHeight;
         } else if (direction === 'left') {
-            return nextLeft + wordElement.offsetWidth >= otherPosition;
+            return nextPosition + wordElement.offsetWidth >= otherPosition;
         } else if (direction === 'right') {
-            return nextLeft <= otherPosition + wordElement.offsetWidth;
+            return nextPosition <= otherPosition + wordElement.offsetWidth;
         }
         return false;
     });
@@ -504,18 +518,46 @@ function wordReachedBottom(wordElement) {
     wordElement.classList.add('grounded');
     clearInterval(wordElement.moveInterval);
     wordElement.moveInterval = null;
-    document.getElementById('userInput').value = ''; // Clear input box
+    document.getElementById('userInput').value = ''; // 清空输入框
 
-    setActiveWordsCount(getActiveWordsCount() - 1); // Use setter function
-    setGroundedWordCount(getGroundedWordCount() + 1);
+    setActiveWordsCount(getActiveWordsCount() - 1); // 使用 setter
+    setGroundedWordCount(getGroundedWordCount() + 1); // 使用 setter
 
-    // Check if all words have been processed
+    const gameContainer = document.getElementById('gameContainer');
+    const segmentWidth = gameContainer.clientWidth / 6;
+    const segmentIndex = Math.floor(parseFloat(wordElement.style.left) / segmentWidth);
+
+    // 增加该列的堆叠高度
+    increaseSegmentHeight(segmentIndex, wordHeight);
+    console.log(`Segment ${segmentIndex} height increased to ${getSegmentHeight(segmentIndex)}px`);
+
+    // 获取容器的高度
+    const containerHeight = gameContainer.clientHeight;
+    console.log(`Container height: ${containerHeight}px`);
+
+    // 获取当前列的堆叠高度
+    const currentHeight = getSegmentHeight(segmentIndex);
+    console.log(`Current segment height: ${currentHeight}px`);
+
+    // 检查是否达到或超过容器高度
+    if (currentHeight >= containerHeight) {
+        console.log(`Segment ${segmentIndex} reached container height. Ending game.`);
+        clearInterval(getDropIntervalId()); // 清除掉落间隔
+        showFinalScore(); // 显示最终得分
+        stopGame(); // 停止游戏
+        return; // 立即退出函数，防止继续执行
+    }
+
+    // 检查是否所有单词都已处理完毕
     if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
-        clearInterval(getDropIntervalId()); // Use getter function
-        showFinalScore(); // Call showFinalScore from score.js
+        clearInterval(getDropIntervalId());
+        showFinalScore();
     }
 }
 
+/**
+ * Focuses on the closest active word to the bottom (for user to type).
+ */
 export function focusClosestWord() {
     const gameContainer = document.getElementById('gameContainer');
     const wordsOnScreen = Array.from(gameContainer.getElementsByClassName('word'));

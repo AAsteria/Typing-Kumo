@@ -5,7 +5,7 @@ export function showFinalScore(adjustedScore, elapsedTime) {
         <div class="final-score" style="text-align: center; font-size: 24px; color: var(--secondary-color);">
             <p><strong>Game Over!</strong></p>
             <p style="font-size: 18px; color: #333;">
-                <em>Final Score: ${adjustedScore.toFixed(2)} points / ${elapsedTime} s</em>
+                <em>Final Score: ${adjustedScore} points / ${elapsedTime} s</em>
             </p>
         </div>`;
 }
