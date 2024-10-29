@@ -7,7 +7,8 @@ import {
     getGroundedWordCount, setGroundedWordCount,
     isGamePaused,
     getSegmentHeight, increaseSegmentHeight,
-    getIsTyping
+    getIsTyping,
+    setIsTyping
 } from './vars.js';
 import { 
     lockDirectionCheckbox, 
@@ -442,6 +443,10 @@ function getNextGroundedPosition(segmentIndex, direction) {
 }
 
 function wordReachedBottom(wordElement) {
+    wordElement.classList.remove('active');  // Remove the active state
+    wordElement.classList.add('grounded');   // Mark word as grounded
+    setIsTyping(false);
+    
     if (lockDirectionCheckbox.checked) {
         if (wordElement.moveInterval) {
             clearInterval(wordElement.moveInterval);
@@ -461,6 +466,7 @@ function wordReachedBottom(wordElement) {
 
         setActiveWordsCount(getActiveWordsCount() - 1);
         setGroundedWordCount(getGroundedWordCount() + 1);
+        focusClosestWord(); 
 
         const gameContainer = document.getElementById('gameContainer');
         const segmentWidth = gameContainer.clientWidth / 6;
