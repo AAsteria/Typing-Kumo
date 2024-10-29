@@ -8,7 +8,8 @@ import {
     isGamePaused, setGamePaused,
     getGroundedWordCount, setGroundedWordCount,
     decreaseSegmentHeight,
-    resetSegmentHeights
+    resetSegmentHeights,
+    getIsTyping, setIsTyping
 } from './vars.js';
 import { 
     startWordDropInterval, 
@@ -25,6 +26,8 @@ import { displayFinalScore } from './score.js';
 
 // DOM Elements
 export const gameContainer = document.getElementById('gameContainer');
+
+let isTyping = getIsTyping();
 
 const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
@@ -251,12 +254,12 @@ function checkInput() {
   const typedValue = userInput.value;
 
   if (activeWord) {
-      const wordText = activeWord.dataset.originalText || activeWord.textContent;
+      setIsTyping(true);  // Prevent switching active word
 
+      const wordText = activeWord.dataset.originalText || activeWord.textContent;
       let highlightedText = '';
       let isError = false;
 
-      // 遍历每个输入的字符并与单词文本匹配
       for (let i = 0; i < typedValue.length; i++) {
           const typedChar = typedValue[i];
           const originalChar = wordText[i];
@@ -277,7 +280,7 @@ function checkInput() {
 
       if (typedValue === wordText) {
           const segmentIndex = getSegmentIndex(activeWord);
-          decreaseSegmentHeight(segmentIndex, wordHeight); // 减少堆叠高度
+          decreaseSegmentHeight(segmentIndex, wordHeight);
 
           if (activeWord.moveInterval) {
               clearInterval(activeWord.moveInterval);
@@ -291,7 +294,8 @@ function checkInput() {
           updateScore();
           userInput.value = '';
 
-          // 检查是否所有单词都已处理完毕
+          setIsTyping(false);
+
           if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
               clearInterval(getDropIntervalId());
               stopGame();

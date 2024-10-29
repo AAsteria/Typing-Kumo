@@ -6,7 +6,8 @@ import {
     getWords, getDropIntervalId, setDropIntervalId, 
     getGroundedWordCount, setGroundedWordCount,
     isGamePaused,
-    getSegmentHeight, increaseSegmentHeight
+    getSegmentHeight, increaseSegmentHeight,
+    getIsTyping
 } from './vars.js';
 import { 
     lockDirectionCheckbox, 
@@ -19,6 +20,7 @@ const MAX_FONT_SIZE = 20;
 const MIN_FONT_SIZE = 8;
 
 let lastUsedSegment = -1;
+let isTyping = getIsTyping();
 
 export function startWordDropInterval() {
     const words = getWords();
@@ -232,7 +234,7 @@ export function moveWordDown(wordElement, segmentIndex) {
             wordElement.style.top = `${nextTop}px`;
         }
 
-        focusClosestWord();
+        if (!isTyping) focusClosestWord();
     }, 10);
 }
 
@@ -266,7 +268,7 @@ export function moveWordUp(wordElement, segmentIndex) {
             wordElement.style.top = `${nextTop}px`;
         }
 
-        focusClosestWord();
+        if (!isTyping) focusClosestWord();
     }, 10);
 }
 
@@ -300,7 +302,7 @@ export function moveWordLeft(wordElement, segmentIndex) {
             wordElement.style.left = `${nextLeft}px`;
         }
 
-        focusClosestWord();
+        if (!isTyping) focusClosestWord();
     }, 10);
 }
 
@@ -345,7 +347,7 @@ export function moveWordRight(wordElement, segmentIndex) {
             wordElement.style.left = `${nextLeft}px`;
         }
 
-        focusClosestWord();
+        if (!isTyping) focusClosestWord();
     }, 10);
 }
 
@@ -488,6 +490,8 @@ function wordReachedBottom(wordElement) {
 }
 
 export function focusClosestWord() {
+    if (getIsTyping()) return; // Prevent switching active word
+
     const gameContainer = document.getElementById('gameContainer');
     const wordsOnScreen = Array.from(gameContainer.getElementsByClassName('word'));
     let closestWord = null;
@@ -504,3 +508,4 @@ export function focusClosestWord() {
     wordsOnScreen.forEach((word) => word.classList.remove('active'));
     if (closestWord) closestWord.classList.add('active');
 }
+

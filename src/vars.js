@@ -80,3 +80,15 @@ export function decreaseSegmentHeight(index, delta) {
 export function resetSegmentHeights() {
     segmentHeights = Array(6).fill(0);
 }
+
+// if a word is active
+let isTyping = false;
+
+export function getIsTyping() {
+    return isTyping;
+}
+
+export function setIsTyping(value) {
+    isTyping = value;
+}
+
