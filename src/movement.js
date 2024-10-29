@@ -144,12 +144,12 @@ function dropWord(word) {
         case 'left':
             wordElement.style.top = `${topPosition}px`;
             wordElement.style.left = '0px';
-            rotation = 90;
+            rotation = -90;
             break;
         case 'right':
             wordElement.style.top = `${topPosition}px`;
             wordElement.style.left = `${gameContainer.clientWidth - wordHeight}px`; // 使用动态 wordHeight
-            rotation = -90;
+            rotation = 90;
             break;
     }
 
