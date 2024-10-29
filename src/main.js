@@ -165,12 +165,31 @@ function startGame() {
  * @returns {Array} An array of word parts.
  */
 function splitWordWithPunctuation(word) {
-  const match = word.match(/^([a-zA-Z'-]+)([.,!?;:]?)$/);
-  if (match) {
-    const [_, mainWord, punctuation] = match;
-    return punctuation ? [mainWord, punctuation] : [mainWord];
+  const parts = [];
+  let currentPart = '';
+
+  // Regular expression for alphanumeric characters only
+  const wordChar = /\w/;
+  
+  for (const char of word) {
+    if (wordChar.test(char)) {
+      // If it's an alphanumeric character, add it to the current part
+      currentPart += char;
+    } else {
+      // If it's punctuation or special character, push the current part (if any)
+      if (currentPart) {
+        parts.push(currentPart);
+        currentPart = '';
+      }
+      // Push the non-alphanumeric character as its own part
+      parts.push(char);
+    }
   }
-  return [word];
+  // Push the last accumulated part, if any
+  if (currentPart) {
+    parts.push(currentPart);
+  }
+  return parts;
 }
 
 /**
