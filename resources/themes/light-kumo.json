@@ -17,5 +17,6 @@
     "screencastBackground": "#ffdbe8",
     "screencastActive": "#a0e1ff",
     "dialogBackground": "#ffffff",
-    "sliderBackground": "#f8bbd0"
+    "sliderBackground": "#f8bbd0",
+    "sliderForeground": "#CDCDCD"
 } 

@@ -157,6 +157,9 @@ function startGame() {
   startWordDropInterval();
 
   userInput.focus();
+
+  delaySlider.disabled = true;
+  speedSlider.disabled = true;
 }
 
 /**
@@ -209,6 +212,9 @@ export function stopGame() {
   });
   showFinalScore();
   userInput.value = '';
+
+  delaySlider.disabled = false;
+  speedSlider.disabled = false;
 }
 
 /**
@@ -227,6 +233,9 @@ function resetGame() {
   updateTimer();
   userInput.value = '';
   setGamePaused(false);
+
+  delaySlider.disabled = false;
+  speedSlider.disabled = false;
 }
 
 /**

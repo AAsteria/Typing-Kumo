@@ -29,6 +29,15 @@ input[type="range"]::-webkit-slider-thumb {
   transition: background-color 0.2s;
 }
 
+input[type="range"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+input[type="range"]:disabled::-webkit-slider-thumb {
+  background: var(--slider-background-color, #D9D9D9);
+}
+
 input[type="range"]::-webkit-slider-thumb:hover {
   background: var(--hover-color, #f06292);
 }
