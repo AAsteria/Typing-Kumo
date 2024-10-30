@@ -279,8 +279,10 @@ function getSegmentIndex(wordElement) {
  */
 function checkInput() {
   const activeWord = document.querySelector('.word.active');
-  const typedValue = userInput.value;
+  let typedValue = userInput.value;
 
+  // ignore spaces in the input
+  typedValue = typedValue.replace(/\s+/g, '');
   if (activeWord) {
       setIsTyping(true);  // Prevent switching active word
 
