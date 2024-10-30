@@ -1,3 +1,5 @@
+import { userInput } from "./main.js";
+
 const webTitle = document.getElementById('title');  // In-page title element
 const gameTitle = document.querySelector('title');  // <title> element in the head
 
@@ -18,5 +20,8 @@ function updateTitle() {
 }
 
 [lockDirectionCheckbox, mirrorModeCheckbox, upsideDownModeCheckbox].forEach(checkbox =>
-    checkbox.addEventListener('change', updateTitle)
+    checkbox.addEventListener('change', () => {
+        updateTitle();
+        userInput.focus();
+    })
 );

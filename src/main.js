@@ -26,6 +26,7 @@ import { displayFinalScore } from './score.js';
 
 // DOM Elements
 export const gameContainer = document.getElementById('gameContainer');
+export const userInput = document.getElementById('userInput');
 
 let isTyping = getIsTyping();
 
@@ -33,7 +34,6 @@ const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
 const endButton = document.getElementById('endGame');
 
-const userInput = document.getElementById('userInput');
 const scoreDisplay = document.getElementById('scoreDisplay');
 
 const delaySlider = document.getElementById('delaySlider');
