@@ -17,6 +17,12 @@
   gap: 5px;
 }
 
+/* 仅适用于 Webkit 浏览器 */
+#screencastOverlay::-webkit-scrollbar,
+#screencastContent::-webkit-scrollbar {
+  display: none;
+}
+
 #screencastOverlay.active {
   display: flex;
 }
