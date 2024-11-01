@@ -66,11 +66,11 @@ window.addEventListener('resize', () => {
 });
 
 window.addEventListener('keydown', (event) => {
-    if (event.metaKey && event.key === 'l') {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'l') {
         event.preventDefault();
         if (!isFullScreen) enterFullScreen();
       }
-      if (event.metaKey && event.key === 's') {
+      if ((event.metaKey || event.ctrlKey) && event.key === 's') {
         event.preventDefault();
         if (isFullScreen) exitFullScreen();
       }

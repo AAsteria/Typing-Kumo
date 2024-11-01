@@ -48,7 +48,6 @@ input[type="range"]::-moz-range-thumb {
   height: 20px;
   background: var(--secondary-color, #ff80ab);
   border-radius: 50%;
-  cursor: pointer;
 }
 
 input[type="range"]::-moz-range-track {

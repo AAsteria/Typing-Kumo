@@ -3,7 +3,6 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  cursor: pointer;
   z-index: 1000;
   font-size: 30px;
   color: var(--secondary-color, #ff80ab);
@@ -40,7 +39,6 @@
   position: fixed;
   top: 20px;
   right: 70px;
-  cursor: pointer;
   z-index: 1000;
   font-size: 30px;
   color: var(--secondary-color);

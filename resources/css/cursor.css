@@ -10,5 +10,6 @@
     background-color: var(--cursor-background-color, transparent);
     pointer-events: none;
     z-index: 9999;
-  }
+    transform: translate(-50%, -50%);
+}
   

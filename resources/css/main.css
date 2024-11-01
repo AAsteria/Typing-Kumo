@@ -6,12 +6,12 @@
 
 /* Body Layout */
 body {
-  margin: 0;
+  margin-bottom: 30px;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   background-color: var(--background-color, #f0f4f8);
   font-family: 'Comic Sans MS', cursive, sans-serif;
 }
