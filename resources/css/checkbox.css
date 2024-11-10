@@ -1,5 +1,7 @@
 /* Check Box Container */
 #additionalOptions {
+  z-index: 10;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,10 +29,10 @@
   height: 20px;
   width: 20px;
   background-color: var(--checkbox-background-color, #f8bbd0);
-  border-radius: 8px;
+  border-radius: 7px;
   position: relative;
   margin-right: 8px;
-  transition: background-color 0.3s ease, box-shadow 0.3s;
+  transition: background-color 0.3s;
 }
 
 .custom-checkbox input:checked + .checkmark:after {
@@ -47,12 +49,78 @@
 
 .custom-checkbox input:checked + .checkmark {
   background-color: var(--secondary-color, #ff80ab);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Checkbox Label */
 .checkbox-label {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   font-size: 16px;
   color: var(--text-color, #333333);
+}
+
+/* Mode Container */
+.mode-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: flex-start; /* 左对齐 */
+  width: 100%;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* 主模式和子模式 */
+.mode-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Position mode-dropdown to start near the Direction checkbox */
+.mode-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #b39ddb;
+  z-index: 15;
+  width: auto;
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.mode-dropdown.active {
+  display: flex;
+}
+
+/* New style for Show More button */
+#showMoreButton {
+  background-color: #d1bdf4; /* Updated color */
+  color: #fff; /* White text for contrast */
+  font-size: 14px;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#showMoreButton:hover {
+  background-color: #b799e9; /* Darker hover color */
+}
+
+.sub-mode {
+  position: absolute;
+  top: 100%; /* 定位在主模式的下方 */
+  left: 0;
+  margin-top: 5px; /* 增加与主模式之间的间距 */
+}
+
+.hidden {
+  display: none;
 }

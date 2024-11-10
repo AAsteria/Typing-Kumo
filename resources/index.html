@@ -35,23 +35,47 @@
       </label>
       <input type="range" id="speedSlider" min="1" max="35" step="0.1" value="5">
     </div>    
-    <div id="additionalOptions">
-      <label class="custom-checkbox">
-        <input type="checkbox" id="lockDirection">
-        <span class="checkmark"></span>
-        <span class="checkbox-label">Direction</span>
-      </label>
-      <label class="custom-checkbox">
-        <input type="checkbox" id="mirrorMode">
-        <span class="checkmark"></span>
-        <span class="checkbox-label">Mirror</span>
-      </label>
+    <div id="additionalOptions" class="mode-container">
+      <div class="mode-group">
+        <label class="custom-checkbox">
+          <input type="checkbox" id="lockDirection">
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Direction</span>
+        </label>
+      </div>
+    
+      <div class="mode-group">
+        <label class="custom-checkbox">
+          <input type="checkbox" id="mirrorMode">
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Mirror</span>
+        </label>
+      </div>
+    
       <label class="custom-checkbox">
         <input type="checkbox" id="upsideDownMode">
         <span class="checkmark"></span>
         <span class="checkbox-label">Upside Down</span>
       </label>
-    </div>          
+    
+      <!-- Show More Button -->
+      <button id="showMoreButton">More <i class="fa fa-caret-down"></i></button>
+    
+      <!-- Dropdown for additional modes -->
+      <div class="mode-dropdown hidden">
+        <label class="custom-checkbox" id="memoryMode">
+          <input type="checkbox">
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Memory</span>
+        </label>
+        <label class="custom-checkbox" id="encodeMode">
+          <input type="checkbox">
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Encode</span>
+        </label>
+      </div>
+    </div>
+            
     <div id="gameContainer"></div>
     <input type="text" id="userInput" placeholder="Type the word...'ctrl/cmd + l/s' to enter/exit immerse mode" autofocus />
     <div class="info">
