@@ -1,5 +1,5 @@
 // main.js
-import { inputParagraph } from './random.js'
+import { inputParagraph } from './random.js';
 import { 
     getCurrentWordIndex, setCurrentWordIndex, 
     getActiveWordsCount, setActiveWordsCount, 
@@ -17,12 +17,7 @@ import {
     resumeWordMovements, 
     focusClosestWord 
 } from './movement.js';
-import { 
-    lockDirectionCheckbox, 
-    mirrorModeCheckbox, 
-    upsideDownModeCheckbox,
-    memoryModeCheckbox
-} from './mode.js';
+import { getDifficultyMultiplier } from './mode.js';
 import { displayFinalScore } from './score.js';
 
 // DOM Elements
@@ -32,6 +27,8 @@ export const userInput = document.getElementById('userInput');
 const startButton = document.getElementById('startGame');
 const pauseButton = document.getElementById('pauseGame');
 const endButton = document.getElementById('endGame');
+pauseButton.disabled = true;
+endButton.disabled = true;
 
 const scoreDisplay = document.getElementById('scoreDisplay');
 
@@ -47,7 +44,7 @@ let startTime;
 let elapsedTime = 0;
 
 const totalScore = 1000;
-export const wordHeight = 32; // 确保与 CSS 中的 word 元素高度一致
+export const wordHeight = 32; // Ensure consistent with CSS word element height
 
 // Setup Cursor
 const cursor = document.createElement('div');
@@ -102,7 +99,7 @@ userInput.addEventListener('keydown', (event) => {
       const segmentIndex = getSegmentIndex(activeWord);
       activeWord.remove();
       setActiveWordsCount(getActiveWordsCount() - 1);
-      decreaseSegmentHeight(segmentIndex, wordHeight); // 减少堆叠高度
+      decreaseSegmentHeight(segmentIndex, wordHeight); // Reduce stacking height
       userInput.value = '';
       focusClosestWord();
     }
@@ -157,6 +154,9 @@ function startGame() {
 
   userInput.focus();
 
+  pauseButton.disabled = true;
+  endButton.disabled = true;
+
   delaySlider.disabled = true;
   speedSlider.disabled = true;
 }
@@ -201,7 +201,7 @@ export function stopGame() {
   setGamePaused(true);
   clearInterval(getDropIntervalId());
 
-  // 停止所有移动的单词
+  // Stop all moving words
   const movingWords = Array.from(gameContainer.getElementsByClassName('word'));
   movingWords.forEach(word => {
       if (word.moveInterval) {
@@ -211,6 +211,9 @@ export function stopGame() {
   });
   showFinalScore();
   userInput.value = '';
+
+  pauseButton.disabled = true;
+  endButton.disabled = true;
 
   delaySlider.disabled = false;
   speedSlider.disabled = false;
@@ -225,7 +228,7 @@ function resetGame() {
   setActiveWordsCount(0);
   setCurrentWordIndex(0);
   elapsedTime = 0;
-  resetSegmentHeights(); // 重置所有列的堆叠高度
+  resetSegmentHeights(); // Reset stacking heights for all columns
 
   clearInterval(getDropIntervalId());
   updateScore();
@@ -263,9 +266,9 @@ function togglePause() {
 }
 
 /**
- * 获取单词所属的列索引。
- * @param {HTMLElement} wordElement - 单词元素。
- * @returns {number} 列索引。
+ * Gets the index of the segment (column) the word belongs to.
+ * @param {HTMLElement} wordElement - The word element.
+ * @returns {number} The segment index.
  */
 function getSegmentIndex(wordElement) {
     const gameContainer = document.getElementById('gameContainer');
@@ -280,7 +283,7 @@ function checkInput() {
   const activeWord = document.querySelector('.word.active');
   let typedValue = userInput.value;
 
-  // ignore spaces in the input
+  // Ignore spaces in the input
   typedValue = typedValue.replace(/\s+/g, '');
   if (activeWord) {
       setIsTyping(true);  // Prevent switching active word
@@ -369,10 +372,7 @@ function showFinalScore() {
   endButton.disabled = true;
   pauseButton.disabled = true;
 
-  let difficultyMultiplier = 1;
-  if (lockDirectionCheckbox.checked) difficultyMultiplier *= 2;
-  if (mirrorModeCheckbox.checked) difficultyMultiplier *= 2;
-  if (upsideDownModeCheckbox.checked) difficultyMultiplier *= 2;
+  const difficultyMultiplier = getDifficultyMultiplier();
 
   const adjustedScore = shownScore * difficultyMultiplier;
 

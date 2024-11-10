@@ -1,4 +1,5 @@
-import { userInput } from "./main.js";
+// mode.js
+import { userInput } from './main.js';
 
 const webTitle = document.getElementById('title');  // In-page title element
 const gameTitle = document.querySelector('title');  // <title> element in the head
@@ -42,3 +43,15 @@ document.addEventListener('click', (event) => {
         userInput.focus();
     })
 );
+
+/**
+ * Calculates the difficulty multiplier based on selected modes.
+ * @returns {number} The difficulty multiplier.
+ */
+export function getDifficultyMultiplier() {
+    let difficultyMultiplier = 1;
+    if (lockDirectionCheckbox.checked) difficultyMultiplier *= 2;
+    if (mirrorModeCheckbox.checked) difficultyMultiplier *= 2;
+    if (upsideDownModeCheckbox.checked) difficultyMultiplier *= 2;
+    return difficultyMultiplier;
+}
