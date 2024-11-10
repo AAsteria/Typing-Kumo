@@ -4,18 +4,20 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: var(--screencast-background-color, #ffdbe8);
+  background-color: rgba(255, 219, 232, 0.95);
   padding: 10px;
   display: none;
   align-items: center;
   justify-content: space-between;
   z-index: 9999;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   color: var(--inverse-text-color, #ffffff);
   overflow-x: auto;
   gap: 5px;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 /* 仅适用于 Webkit 浏览器 */
 #screencastOverlay::-webkit-scrollbar,

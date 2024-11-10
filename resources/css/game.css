@@ -1,13 +1,14 @@
 /* Game Container */
 #gameContainer {
-  width: 100%; /* Matches the width of the textarea and parent container */
+  width: 100%;
   height: 360px;
   border: 2px solid var(--primary-color, #80d8ff);
   border-radius: 10px;
-  background-color: var(--game-background-color, #f5fcff);
+  background-color: rgba(245, 252, 255, 0.95);
   overflow: hidden;
   margin-bottom: 20px;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Word Elements */
@@ -36,6 +37,7 @@
   padding: 10px;
   font-size: 16px;
   outline: var(--input-outline-color, #40c4ff);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #userInput::placeholder {
