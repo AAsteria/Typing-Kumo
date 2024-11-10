@@ -21,7 +21,6 @@ const MAX_FONT_SIZE = 20;
 const MIN_FONT_SIZE = 8;
 
 let lastUsedSegment = -1;
-let isTyping = getIsTyping();
 
 export function startWordDropInterval() {
     const words = getWords();
@@ -67,23 +66,7 @@ export function resumeWordMovements() {
         const segmentIndex = Math.floor(leftPosition / segmentWidth);
         const direction = word.dataset.direction || 'down';
 
-        switch (direction) {
-            case 'down':
-                moveWordDown(word, segmentIndex);
-                break;
-            case 'up':
-                moveWordUp(word, segmentIndex);
-                break;
-            case 'left':
-                moveWordLeft(word, segmentIndex);
-                break;
-            case 'right':
-                moveWordRight(word, segmentIndex);
-                break;
-            default:
-                moveWordDown(word, segmentIndex);
-                break;
-        }
+        moveWord(word, segmentIndex, direction);
     });
 }
 
@@ -110,8 +93,6 @@ function dropWord(word) {
     if (lockDirectionCheckbox.checked) {
         const directions = ['down', 'up', 'left', 'right'];
         direction = directions[Math.floor(Math.random() * directions.length)];
-    } else {
-        direction = 'down';
     }
 
     wordElement.dataset.direction = direction;
@@ -134,7 +115,7 @@ function dropWord(word) {
             break;
         case 'right':
             wordElement.style.top = `${topPosition}px`;
-            wordElement.style.left = `${gameContainer.clientWidth - wordHeight}px`;
+            wordElement.style.left = `${gameContainer.clientWidth - wordElement.offsetWidth}px`;
             rotation = 90;
             break;
     }
@@ -162,29 +143,14 @@ function dropWord(word) {
     gameContainer.appendChild(wordElement);
     setActiveWordsCount(getActiveWordsCount() + 1);
 
-    if (direction === 'left' || direction === 'right') {
-        fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE, true);
-    } else {
-        fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE);
-    }
+    fitTextToElement(wordElement, segmentWidth - 4, MAX_FONT_SIZE, MIN_FONT_SIZE);
 
-    switch (direction) {
-        case 'down':
-            moveWordDown(wordElement, positionIndex);
-            break;
-        case 'up':
-            moveWordUp(wordElement, positionIndex);
-            break;
-        case 'left':
-            moveWordLeft(wordElement, positionIndex);
-            break;
-        case 'right':
-            moveWordRight(wordElement, positionIndex);
-            break;
-    }
+    const segmentIndex = positionIndex;
+
+    moveWord(wordElement, segmentIndex, direction);
 }
 
-function fitTextToElement(element, maxWidth, maxFontSize, minFontSize, isHorizontal = false) {
+function fitTextToElement(element, maxWidth, maxFontSize, minFontSize) {
     let fontSize = maxFontSize;
     element.style.fontSize = `${fontSize}px`;
 
@@ -205,156 +171,78 @@ function fitTextToElement(element, maxWidth, maxFontSize, minFontSize, isHorizon
     }
 }
 
-export function moveWordDown(wordElement, segmentIndex) {
+function moveWord(wordElement, segmentIndex, direction) {
     const speed = parseInt(document.getElementById('speedSlider').value, 10);
-    const direction = wordElement.dataset.direction;
 
     if (wordElement.moveInterval) return;
 
     wordElement.moveInterval = setInterval(() => {
         if (isGamePaused()) return;
 
-        const currentTop = parseFloat(wordElement.style.top);
-        const nextTop = currentTop + speed / 10;
-
         const gameContainer = document.getElementById('gameContainer');
-        const containerHeight = gameContainer.clientHeight;
 
-        if (
-            nextTop + wordHeight >= containerHeight ||
-            checkCollisionWithGroundedWord(wordElement, nextTop, segmentIndex, direction)
-        ) {
-            const finalTop = Math.min(
-                nextTop,
-                getNextGroundedPosition(segmentIndex, direction)
-            );
+        let currentPos, nextPos, containerLimit, wordSize;
 
-            wordElement.style.top = `${finalTop}px`;
-            wordReachedBottom(wordElement);
+        if (direction === 'down' || direction === 'up') {
+            currentPos = parseFloat(wordElement.style.top);
+            wordSize = wordHeight;
+            containerLimit = gameContainer.clientHeight;
         } else {
-            wordElement.style.top = `${nextTop}px`;
+            currentPos = parseFloat(wordElement.style.left);
+            wordSize = wordElement.offsetWidth;
+            containerLimit = gameContainer.clientWidth;
         }
 
-        if (!isTyping) focusClosestWord();
-    }, 10);
-}
+        let increment = speed / 10;
 
-export function moveWordUp(wordElement, segmentIndex) {
-    const speed = parseInt(document.getElementById('speedSlider').value, 10);
-    const direction = wordElement.dataset.direction;
-
-    if (wordElement.moveInterval) return;
-
-    wordElement.moveInterval = setInterval(() => {
-        if (isGamePaused()) return;
-
-        const currentTop = parseFloat(wordElement.style.top);
-        const nextTop = currentTop - speed / 10;
-
-        const gameContainer = document.getElementById('gameContainer');
-        const containerHeight = gameContainer.clientHeight;
-
-        if (
-            nextTop <= 0 ||
-            checkCollisionWithGroundedWord(wordElement, nextTop, segmentIndex, direction)
-        ) {
-            const finalTop = Math.max(
-                nextTop,
-                getNextGroundedPosition(segmentIndex, direction)
-            );
-
-            wordElement.style.top = `${finalTop}px`;
-            wordReachedBottom(wordElement);
-        } else {
-            wordElement.style.top = `${nextTop}px`;
+        if (direction === 'up' || direction === 'right') {
+            increment = -increment;
         }
 
-        if (!isTyping) focusClosestWord();
-    }, 10);
-}
+        nextPos = currentPos + increment;
 
-export function moveWordLeft(wordElement, segmentIndex) {
-    const speed = parseInt(document.getElementById('speedSlider').value, 10);
-    const direction = wordElement.dataset.direction;
+        let collision = checkCollisionWithGroundedWord(wordElement, nextPos, segmentIndex, direction);
 
-    if (wordElement.moveInterval) return;
+        let reachedEnd = false;
 
-    wordElement.moveInterval = setInterval(() => {
-        if (isGamePaused()) return;
-
-        const currentLeft = parseFloat(wordElement.style.left);
-        const nextLeft = currentLeft + speed / 10;
-
-        const gameContainer = document.getElementById('gameContainer');
-        const containerWidth = gameContainer.clientWidth;
-
-        if (
-            nextLeft + wordElement.offsetWidth >= containerWidth ||
-            checkCollisionWithGroundedWord(wordElement, nextLeft, segmentIndex, direction)
-        ) {
-            const finalLeft = Math.min(
-                nextLeft,
-                getNextGroundedPosition(segmentIndex, direction) - wordHeight
-            );
-
-            wordElement.style.left = `${finalLeft}px`;
-            wordReachedBottom(wordElement);
-        } else {
-            wordElement.style.left = `${nextLeft}px`;
-        }
-
-        if (!isTyping) focusClosestWord();
-    }, 10);
-}
-
-export function moveWordRight(wordElement, segmentIndex) {
-    const speed = parseInt(document.getElementById('speedSlider').value, 10);
-    const direction = wordElement.dataset.direction;
-
-    if (wordElement.moveInterval) return;
-
-    wordElement.moveInterval = setInterval(() => {
-        if (isGamePaused()) return;
-
-        const currentLeft = parseFloat(wordElement.style.left);
-        const nextLeft = currentLeft - speed / 10;
-
-        const gameContainer = document.getElementById('gameContainer');
-        const containerWidth = gameContainer.clientWidth;
-
-        if (
-            nextLeft <= 0 ||
-            checkCollisionWithGroundedWord(wordElement, nextLeft, segmentIndex, direction)
-        ) {
-            const finalLeft = Math.max(
-                nextLeft,
-                getNextGroundedPosition(segmentIndex, direction) + wordHeight
-            );
-
-            wordElement.style.left = `${finalLeft}px`;
-            wordElement.classList.add('grounded');
-            clearInterval(wordElement.moveInterval);
-            wordElement.moveInterval = null;
-            document.getElementById('userInput').value = '';
-
-            setActiveWordsCount(getActiveWordsCount() - 1);
-            setGroundedWordCount(getGroundedWordCount() + 1);
-
-            if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
-                clearInterval(getDropIntervalId());
-                stopGame();
+        if (direction === 'down' || direction === 'left') {
+            if (nextPos + wordSize >= containerLimit || collision) {
+                reachedEnd = true;
             }
-        } else {
-            wordElement.style.left = `${nextLeft}px`;
+        } else if (direction === 'up' || direction === 'right') {
+            if (nextPos <= 0 || collision) {
+                reachedEnd = true;
+            }
         }
 
-        if (!isTyping) focusClosestWord();
+        if (reachedEnd) {
+            const finalPos = direction === 'down' || direction === 'left'
+                ? Math.min(nextPos, getNextGroundedPosition(segmentIndex, direction) - wordSize)
+                : Math.max(nextPos, getNextGroundedPosition(segmentIndex, direction) + wordSize);
+
+            if (direction === 'down' || direction === 'up') {
+                wordElement.style.top = `${finalPos}px`;
+            } else {
+                wordElement.style.left = `${finalPos}px`;
+            }
+
+            wordReachedBottom(wordElement);
+        } else {
+            if (direction === 'down' || direction === 'up') {
+                wordElement.style.top = `${nextPos}px`;
+            } else {
+                wordElement.style.left = `${nextPos}px`;
+            }
+        }
+
+        if (!getIsTyping()) focusClosestWord();
+
     }, 10);
 }
 
-function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex, direction) {
+function checkCollisionWithGroundedWord(wordElement, nextPos, segmentIndex, direction) {
     const gameContainer = document.getElementById('gameContainer');
-    const segmentWidth = gameContainer.clientHeight / 6;
+    const segmentWidth = gameContainer.clientWidth / 6;
     const segmentHeight = gameContainer.clientHeight / 6;
 
     const wordsInSegment = Array.from(gameContainer.getElementsByClassName('grounded')).filter(
@@ -366,7 +254,6 @@ function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex,
                 case 'down':
                 case 'up':
                     const left = parseFloat(word.style.left);
-                    const segmentWidth = gameContainer.clientWidth / 6;
                     return left >= segmentIndex * segmentWidth && left < (segmentIndex + 1) * segmentWidth;
                 case 'left':
                 case 'right':
@@ -379,18 +266,20 @@ function checkCollisionWithGroundedWord(wordElement, nextPosition, segmentIndex,
     );
 
     return wordsInSegment.some((otherWord) => {
-        const otherPosition = direction === 'down' || direction === 'up'
+        let otherPos = direction === 'down' || direction === 'up'
             ? parseFloat(otherWord.style.top)
             : parseFloat(otherWord.style.left);
 
+        const wordSize = direction === 'down' || direction === 'up' ? wordHeight : wordElement.offsetWidth;
+
         if (direction === 'down') {
-            return nextPosition + wordHeight >= otherPosition;
+            return nextPos + wordSize >= otherPos;
         } else if (direction === 'up') {
-            return nextPosition <= otherPosition + wordHeight;
+            return nextPos <= otherPos + wordHeight;
         } else if (direction === 'left') {
-            return nextPosition + wordElement.offsetWidth >= otherPosition;
+            return nextPos + wordSize >= otherPos;
         } else if (direction === 'right') {
-            return nextPosition <= otherPosition + wordElement.offsetWidth;
+            return nextPos <= otherPos + wordElement.offsetWidth;
         }
         return false;
     });
@@ -428,30 +317,31 @@ function getNextGroundedPosition(segmentIndex, direction) {
     } else {
         if (direction === 'down') {
             const topPositions = wordsInSegment.map((word) => parseFloat(word.style.top));
-            return Math.min(...topPositions) - wordHeight;
+            return Math.min(...topPositions);
         } else if (direction === 'up') {
             const topPositions = wordsInSegment.map((word) => parseFloat(word.style.top));
             return Math.max(...topPositions) + wordHeight;
         } else if (direction === 'right') {
             const leftPositions = wordsInSegment.map((word) => parseFloat(word.style.left));
-            return Math.min(...leftPositions) - wordHeight;
+            return Math.min(...leftPositions);
         } else if (direction === 'left') {
             const leftPositions = wordsInSegment.map((word) => parseFloat(word.style.left));
-            return Math.max(...leftPositions) + wordHeight;
+            return Math.max(...leftPositions) + wordElement.offsetWidth;
         }
     }
 }
 
 function wordReachedBottom(wordElement) {
-    wordElement.classList.remove('active');  // Remove the active state
-    wordElement.classList.add('grounded');   // Mark word as grounded
+    wordElement.classList.remove('active');
+    wordElement.classList.add('grounded');
     setIsTyping(false);
-    
+
+    if (wordElement.moveInterval) {
+        clearInterval(wordElement.moveInterval);
+        wordElement.moveInterval = null;
+    }
+
     if (lockDirectionCheckbox.checked) {
-        if (wordElement.moveInterval) {
-            clearInterval(wordElement.moveInterval);
-            wordElement.moveInterval = null;
-        }
         wordElement.remove();
         setActiveWordsCount(getActiveWordsCount() - 1);
         if (getCurrentWordIndex() >= getWords().length && getActiveWordsCount() === 0) {
@@ -459,9 +349,6 @@ function wordReachedBottom(wordElement) {
             stopGame();
         }
     } else {
-        wordElement.classList.add('grounded');
-        clearInterval(wordElement.moveInterval);
-        wordElement.moveInterval = null;
         document.getElementById('userInput').value = '';
 
         setActiveWordsCount(getActiveWordsCount() - 1);
@@ -473,16 +360,12 @@ function wordReachedBottom(wordElement) {
         const segmentIndex = Math.floor(parseFloat(wordElement.style.left) / segmentWidth);
 
         increaseSegmentHeight(segmentIndex, wordHeight);
-        console.log(`Segment ${segmentIndex} height increased to ${getSegmentHeight(segmentIndex)}px`);
 
         const containerHeight = gameContainer.clientHeight;
-        console.log(`Container height: ${containerHeight}px`);
 
         const currentHeight = getSegmentHeight(segmentIndex);
-        console.log(`Current segment height: ${currentHeight}px`);
 
         if (currentHeight >= containerHeight) {
-            console.log(`Segment ${segmentIndex} reached container height. Ending game.`);
             clearInterval(getDropIntervalId());
             stopGame();
             return;
@@ -496,7 +379,7 @@ function wordReachedBottom(wordElement) {
 }
 
 export function focusClosestWord() {
-    if (getIsTyping()) return; // Prevent switching active word
+    if (getIsTyping()) return;
 
     const gameContainer = document.getElementById('gameContainer');
     const wordsOnScreen = Array.from(gameContainer.getElementsByClassName('word'));
@@ -514,4 +397,3 @@ export function focusClosestWord() {
     wordsOnScreen.forEach((word) => word.classList.remove('active'));
     if (closestWord) closestWord.classList.add('active');
 }
-
