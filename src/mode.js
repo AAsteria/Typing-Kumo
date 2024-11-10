@@ -53,5 +53,6 @@ export function getDifficultyMultiplier() {
     if (lockDirectionCheckbox.checked) difficultyMultiplier *= 2;
     if (mirrorModeCheckbox.checked) difficultyMultiplier *= 2;
     if (upsideDownModeCheckbox.checked) difficultyMultiplier *= 2;
+    if (memoryModeCheckbox.checked) difficultyMultiplier *= 2;
     return difficultyMultiplier;
 }

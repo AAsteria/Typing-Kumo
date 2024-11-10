@@ -13,7 +13,8 @@ import {
 import { 
     lockDirectionCheckbox, 
     mirrorModeCheckbox, 
-    upsideDownModeCheckbox 
+    upsideDownModeCheckbox,
+    memoryModeCheckbox
 } from './mode.js';
 import { stopGame } from './main.js';
 
@@ -74,7 +75,15 @@ function dropWord(word) {
     const gameContainer = document.getElementById('gameContainer');
     const wordElement = document.createElement('div');
     wordElement.classList.add('word');
-    wordElement.textContent = word;
+
+    wordElement.dataset.originalText = word;
+
+    if (memoryMode) {
+        console.log("moemory mode");
+        wordElement.textContent = '?'.repeat(word.length);
+    } else {
+        wordElement.textContent = word;
+    }
 
     let positionIndex;
     const segmentCount = 6;
