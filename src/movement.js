@@ -78,10 +78,11 @@ function dropWord(word) {
 
     wordElement.dataset.originalText = word;
 
-    if (memoryMode) {
-        console.log("moemory mode");
+    if (memoryModeCheckbox.checked) {
+        console.log("memory mode");
         wordElement.textContent = '?'.repeat(word.length);
     } else {
+        console.log("not memory mode");
         wordElement.textContent = word;
     }
 
